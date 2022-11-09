@@ -6,6 +6,9 @@
  * Automatically generated - do not modify.
  */
 package com.microsoft.schemas.xrm._2011.contracts.discovery.impl;
+
+import org.apache.xmlbeans.StringEnumAbstractBase;
+
 /**
  * An XML OrganizationRelease(@http://schemas.microsoft.com/xrm/2011/Contracts/Discovery).
  *
@@ -14,6 +17,16 @@ package com.microsoft.schemas.xrm._2011.contracts.discovery.impl;
 public class OrganizationReleaseImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements com.microsoft.schemas.xrm._2011.contracts.discovery.OrganizationRelease
 {
     private static final long serialVersionUID = 1L;
+
+    @Override
+    public StringEnumAbstractBase enumValue() {
+        return getEnumValue();
+    }
+
+    @Override
+    public void set(StringEnumAbstractBase e) {
+        setEnumValue(e);
+    }
     
     public OrganizationReleaseImpl(org.apache.xmlbeans.SchemaType sType)
     {

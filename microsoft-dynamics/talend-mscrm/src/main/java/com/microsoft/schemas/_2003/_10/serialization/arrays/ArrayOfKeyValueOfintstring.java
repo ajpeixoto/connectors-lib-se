@@ -123,7 +123,7 @@ public interface ArrayOfKeyValueOfintstring extends org.apache.xmlbeans.XmlObjec
          * of this type.
          */
         
-        public static final class Factory
+        static final class StaticFactory
         {
             public static com.microsoft.schemas._2003._10.serialization.arrays.ArrayOfKeyValueOfintstring.KeyValueOfintstring newInstance() {
               return (com.microsoft.schemas._2003._10.serialization.arrays.ArrayOfKeyValueOfintstring.KeyValueOfintstring) org.apache.xmlbeans.XmlBeans.getContextTypeLoader().newInstance( type, null ); }
@@ -131,7 +131,7 @@ public interface ArrayOfKeyValueOfintstring extends org.apache.xmlbeans.XmlObjec
             public static com.microsoft.schemas._2003._10.serialization.arrays.ArrayOfKeyValueOfintstring.KeyValueOfintstring newInstance(org.apache.xmlbeans.XmlOptions options) {
               return (com.microsoft.schemas._2003._10.serialization.arrays.ArrayOfKeyValueOfintstring.KeyValueOfintstring) org.apache.xmlbeans.XmlBeans.getContextTypeLoader().newInstance( type, options ); }
             
-            private Factory() { } // No instance of this class allowed
+            private StaticFactory() { } // No instance of this class allowed
         }
     }
     
@@ -140,7 +140,7 @@ public interface ArrayOfKeyValueOfintstring extends org.apache.xmlbeans.XmlObjec
      * of this type.
      */
     
-    public static final class Factory
+    static final class StaticFactory
     {
         public static com.microsoft.schemas._2003._10.serialization.arrays.ArrayOfKeyValueOfintstring newInstance() {
           return (com.microsoft.schemas._2003._10.serialization.arrays.ArrayOfKeyValueOfintstring) org.apache.xmlbeans.XmlBeans.getContextTypeLoader().newInstance( type, null ); }
@@ -192,22 +192,6 @@ public interface ArrayOfKeyValueOfintstring extends org.apache.xmlbeans.XmlObjec
         public static com.microsoft.schemas._2003._10.serialization.arrays.ArrayOfKeyValueOfintstring parse(org.w3c.dom.Node node, org.apache.xmlbeans.XmlOptions options) throws org.apache.xmlbeans.XmlException {
           return (com.microsoft.schemas._2003._10.serialization.arrays.ArrayOfKeyValueOfintstring) org.apache.xmlbeans.XmlBeans.getContextTypeLoader().parse( node, type, options ); }
         
-        /** @deprecated {@link org.apache.xmlbeans.xml.stream.XMLInputStream} */
-        public static com.microsoft.schemas._2003._10.serialization.arrays.ArrayOfKeyValueOfintstring parse(org.apache.xmlbeans.xml.stream.XMLInputStream xis) throws org.apache.xmlbeans.XmlException, org.apache.xmlbeans.xml.stream.XMLStreamException {
-          return (com.microsoft.schemas._2003._10.serialization.arrays.ArrayOfKeyValueOfintstring) org.apache.xmlbeans.XmlBeans.getContextTypeLoader().parse( xis, type, null ); }
-        
-        /** @deprecated {@link org.apache.xmlbeans.xml.stream.XMLInputStream} */
-        public static com.microsoft.schemas._2003._10.serialization.arrays.ArrayOfKeyValueOfintstring parse(org.apache.xmlbeans.xml.stream.XMLInputStream xis, org.apache.xmlbeans.XmlOptions options) throws org.apache.xmlbeans.XmlException, org.apache.xmlbeans.xml.stream.XMLStreamException {
-          return (com.microsoft.schemas._2003._10.serialization.arrays.ArrayOfKeyValueOfintstring) org.apache.xmlbeans.XmlBeans.getContextTypeLoader().parse( xis, type, options ); }
-        
-        /** @deprecated {@link org.apache.xmlbeans.xml.stream.XMLInputStream} */
-        public static org.apache.xmlbeans.xml.stream.XMLInputStream newValidatingXMLInputStream(org.apache.xmlbeans.xml.stream.XMLInputStream xis) throws org.apache.xmlbeans.XmlException, org.apache.xmlbeans.xml.stream.XMLStreamException {
-          return org.apache.xmlbeans.XmlBeans.getContextTypeLoader().newValidatingXMLInputStream( xis, type, null ); }
-        
-        /** @deprecated {@link org.apache.xmlbeans.xml.stream.XMLInputStream} */
-        public static org.apache.xmlbeans.xml.stream.XMLInputStream newValidatingXMLInputStream(org.apache.xmlbeans.xml.stream.XMLInputStream xis, org.apache.xmlbeans.XmlOptions options) throws org.apache.xmlbeans.XmlException, org.apache.xmlbeans.xml.stream.XMLStreamException {
-          return org.apache.xmlbeans.XmlBeans.getContextTypeLoader().newValidatingXMLInputStream( xis, type, options ); }
-        
-        private Factory() { } // No instance of this class allowed
+        private StaticFactory() { } // No instance of this class allowed
     }
 }

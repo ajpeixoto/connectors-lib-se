@@ -6,6 +6,10 @@
  * Automatically generated - do not modify.
  */
 package com.microsoft.schemas.xrm._2011.metadata.query.impl;
+
+import java.util.List;
+import org.apache.xmlbeans.StringEnumAbstractBase;
+
 /**
  * An XML DeletedMetadataFilters(@http://schemas.microsoft.com/xrm/2011/Metadata/Query).
  *
@@ -14,7 +18,22 @@ package com.microsoft.schemas.xrm._2011.metadata.query.impl;
 public class DeletedMetadataFiltersImpl extends org.apache.xmlbeans.impl.values.XmlListImpl implements com.microsoft.schemas.xrm._2011.metadata.query.DeletedMetadataFilters
 {
     private static final long serialVersionUID = 1L;
-    
+
+    @Override
+    public List<?> listValue() {
+        return getListValue();
+    }
+
+    @Override
+    public List<?> xlistValue() {
+        return xgetListValue();
+    }
+
+    @Override
+    public void set(List<?> list) {
+        setListValue(list);
+    }
+
     public DeletedMetadataFiltersImpl(org.apache.xmlbeans.SchemaType sType)
     {
         super(sType, false);
@@ -32,6 +51,16 @@ public class DeletedMetadataFiltersImpl extends org.apache.xmlbeans.impl.values.
     public static class ItemImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements com.microsoft.schemas.xrm._2011.metadata.query.DeletedMetadataFilters.Item
     {
         private static final long serialVersionUID = 1L;
+
+        @Override
+        public StringEnumAbstractBase enumValue() {
+            return getEnumValue();
+        }
+
+        @Override
+        public void set(StringEnumAbstractBase e) {
+            setEnumValue(e);
+        }
         
         public ItemImpl(org.apache.xmlbeans.SchemaType sType)
         {

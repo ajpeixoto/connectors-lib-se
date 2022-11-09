@@ -7,6 +7,9 @@
  * Automatically generated - do not modify.
  */
 package org.w3.www._2004._06.xmlmime.impl;
+
+import java.util.List;
+
 /**
  * A document containing one expectedMediaType(@http://www.w3.org/2004/06/xmlmime) element.
  *
@@ -100,6 +103,21 @@ public class ExpectedMediaTypeDocumentImpl extends org.apache.xmlbeans.impl.valu
     public static class ExpectedMediaTypeImpl extends org.apache.xmlbeans.impl.values.XmlListImpl implements org.w3.www._2004._06.xmlmime.ExpectedMediaTypeDocument.ExpectedMediaType
     {
         private static final long serialVersionUID = 1L;
+
+        @Override
+        public List<?> listValue() {
+            return getListValue();
+        }
+
+        @Override
+        public List<?> xlistValue() {
+            return xgetListValue();
+        }
+
+        @Override
+        public void set(List<?> list) {
+            setListValue(list);
+        }
         
         public ExpectedMediaTypeImpl(org.apache.xmlbeans.SchemaType sType)
         {

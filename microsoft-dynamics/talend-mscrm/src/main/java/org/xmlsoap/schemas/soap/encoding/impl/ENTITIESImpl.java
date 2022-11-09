@@ -6,6 +6,9 @@
  * Automatically generated - do not modify.
  */
 package org.xmlsoap.schemas.soap.encoding.impl;
+
+import java.util.List;
+
 /**
  * An XML ENTITIES(@http://schemas.xmlsoap.org/soap/encoding/).
  *
@@ -14,6 +17,21 @@ package org.xmlsoap.schemas.soap.encoding.impl;
 public class ENTITIESImpl extends org.apache.xmlbeans.impl.values.XmlListImpl implements org.xmlsoap.schemas.soap.encoding.ENTITIES
 {
     private static final long serialVersionUID = 1L;
+
+    @Override
+    public List<?> listValue() {
+        return getListValue();
+    }
+
+    @Override
+    public List<?> xlistValue() {
+        return xgetListValue();
+    }
+
+    @Override
+    public void set(List<?> list) {
+        setListValue(list);
+    }
     
     public ENTITIESImpl(org.apache.xmlbeans.SchemaType sType)
     {

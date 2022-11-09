@@ -21,7 +21,7 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.kernel.http.HTTPConstants;
 import org.apache.axis2.transport.http.HttpTransportProperties;
 import org.apache.axis2.transport.http.HttpTransportProperties.ProxyProperties;
 import org.apache.http.HttpEntity;
@@ -162,10 +162,10 @@ public class MSCRMClient {
 
 		Options options = serviceStub._getServiceClient().getOptions();
 		
-	    options.setProperty(org.apache.axis2.transport.http.HTTPConstants.REUSE_HTTP_CLIENT, clientConfiguration.isReuseHttpClient());
+	    options.setProperty(HTTPConstants.REUSE_HTTP_CLIENT, clientConfiguration.isReuseHttpClient());
 	    options.setTimeOutInMilliSeconds(Long.valueOf(clientConfiguration.getTimeout()));
-	    options.setProperty(org.apache.axis2.transport.http.HTTPConstants.SO_TIMEOUT, clientConfiguration.getTimeout());
-	    options.setProperty(org.apache.axis2.transport.http.HTTPConstants.CONNECTION_TIMEOUT, clientConfiguration.getTimeout());
+	    options.setProperty(HTTPConstants.SO_TIMEOUT, clientConfiguration.getTimeout());
+	    options.setProperty(HTTPConstants.CONNECTION_TIMEOUT, clientConfiguration.getTimeout());
         return serviceStub;
 
     }

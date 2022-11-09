@@ -6,6 +6,9 @@
  * Automatically generated - do not modify.
  */
 package com.microsoft.schemas.crm._2011.contracts.impl;
+
+import org.apache.xmlbeans.StringEnumAbstractBase;
+
 /**
  * An XML PrivilegeDepth(@http://schemas.microsoft.com/crm/2011/Contracts).
  *
@@ -14,14 +17,22 @@ package com.microsoft.schemas.crm._2011.contracts.impl;
 public class PrivilegeDepthImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements com.microsoft.schemas.crm._2011.contracts.PrivilegeDepth
 {
     private static final long serialVersionUID = 1L;
-    
-    public PrivilegeDepthImpl(org.apache.xmlbeans.SchemaType sType)
-    {
+
+    @Override
+    public StringEnumAbstractBase enumValue() {
+        return getEnumValue();
+    }
+
+    @Override
+    public void set(StringEnumAbstractBase e) {
+        setEnumValue(e);
+    }
+
+    public PrivilegeDepthImpl(org.apache.xmlbeans.SchemaType sType) {
         super(sType, false);
     }
-    
-    protected PrivilegeDepthImpl(org.apache.xmlbeans.SchemaType sType, boolean b)
-    {
+
+    protected PrivilegeDepthImpl(org.apache.xmlbeans.SchemaType sType, boolean b) {
         super(sType, b);
     }
 }

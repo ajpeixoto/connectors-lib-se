@@ -189,7 +189,7 @@ public interface AssociateDocument extends org.apache.xmlbeans.XmlObject
          * of this type.
          */
         
-        public static final class Factory
+        static final class StaticFactory
         {
             public static com.microsoft.schemas.xrm._2011.contracts.services.AssociateDocument.Associate newInstance() {
               return (com.microsoft.schemas.xrm._2011.contracts.services.AssociateDocument.Associate) org.apache.xmlbeans.XmlBeans.getContextTypeLoader().newInstance( type, null ); }
@@ -197,7 +197,7 @@ public interface AssociateDocument extends org.apache.xmlbeans.XmlObject
             public static com.microsoft.schemas.xrm._2011.contracts.services.AssociateDocument.Associate newInstance(org.apache.xmlbeans.XmlOptions options) {
               return (com.microsoft.schemas.xrm._2011.contracts.services.AssociateDocument.Associate) org.apache.xmlbeans.XmlBeans.getContextTypeLoader().newInstance( type, options ); }
             
-            private Factory() { } // No instance of this class allowed
+            private StaticFactory() { } // No instance of this class allowed
         }
     }
     
@@ -206,7 +206,7 @@ public interface AssociateDocument extends org.apache.xmlbeans.XmlObject
      * of this type.
      */
     
-    public static final class Factory
+    static final class StaticFactory
     {
         public static com.microsoft.schemas.xrm._2011.contracts.services.AssociateDocument newInstance() {
           return (com.microsoft.schemas.xrm._2011.contracts.services.AssociateDocument) org.apache.xmlbeans.XmlBeans.getContextTypeLoader().newInstance( type, null ); }
@@ -258,22 +258,6 @@ public interface AssociateDocument extends org.apache.xmlbeans.XmlObject
         public static com.microsoft.schemas.xrm._2011.contracts.services.AssociateDocument parse(org.w3c.dom.Node node, org.apache.xmlbeans.XmlOptions options) throws org.apache.xmlbeans.XmlException {
           return (com.microsoft.schemas.xrm._2011.contracts.services.AssociateDocument) org.apache.xmlbeans.XmlBeans.getContextTypeLoader().parse( node, type, options ); }
         
-        /** @deprecated {@link org.apache.xmlbeans.xml.stream.XMLInputStream} */
-        public static com.microsoft.schemas.xrm._2011.contracts.services.AssociateDocument parse(org.apache.xmlbeans.xml.stream.XMLInputStream xis) throws org.apache.xmlbeans.XmlException, org.apache.xmlbeans.xml.stream.XMLStreamException {
-          return (com.microsoft.schemas.xrm._2011.contracts.services.AssociateDocument) org.apache.xmlbeans.XmlBeans.getContextTypeLoader().parse( xis, type, null ); }
-        
-        /** @deprecated {@link org.apache.xmlbeans.xml.stream.XMLInputStream} */
-        public static com.microsoft.schemas.xrm._2011.contracts.services.AssociateDocument parse(org.apache.xmlbeans.xml.stream.XMLInputStream xis, org.apache.xmlbeans.XmlOptions options) throws org.apache.xmlbeans.XmlException, org.apache.xmlbeans.xml.stream.XMLStreamException {
-          return (com.microsoft.schemas.xrm._2011.contracts.services.AssociateDocument) org.apache.xmlbeans.XmlBeans.getContextTypeLoader().parse( xis, type, options ); }
-        
-        /** @deprecated {@link org.apache.xmlbeans.xml.stream.XMLInputStream} */
-        public static org.apache.xmlbeans.xml.stream.XMLInputStream newValidatingXMLInputStream(org.apache.xmlbeans.xml.stream.XMLInputStream xis) throws org.apache.xmlbeans.XmlException, org.apache.xmlbeans.xml.stream.XMLStreamException {
-          return org.apache.xmlbeans.XmlBeans.getContextTypeLoader().newValidatingXMLInputStream( xis, type, null ); }
-        
-        /** @deprecated {@link org.apache.xmlbeans.xml.stream.XMLInputStream} */
-        public static org.apache.xmlbeans.xml.stream.XMLInputStream newValidatingXMLInputStream(org.apache.xmlbeans.xml.stream.XMLInputStream xis, org.apache.xmlbeans.XmlOptions options) throws org.apache.xmlbeans.XmlException, org.apache.xmlbeans.xml.stream.XMLStreamException {
-          return org.apache.xmlbeans.XmlBeans.getContextTypeLoader().newValidatingXMLInputStream( xis, type, options ); }
-        
-        private Factory() { } // No instance of this class allowed
+        private StaticFactory() { } // No instance of this class allowed
     }
 }

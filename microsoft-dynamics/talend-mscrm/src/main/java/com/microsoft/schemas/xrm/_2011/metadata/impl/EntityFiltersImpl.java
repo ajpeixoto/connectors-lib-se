@@ -6,6 +6,10 @@
  * Automatically generated - do not modify.
  */
 package com.microsoft.schemas.xrm._2011.metadata.impl;
+
+import java.util.List;
+import org.apache.xmlbeans.StringEnumAbstractBase;
+
 /**
  * An XML EntityFilters(@http://schemas.microsoft.com/xrm/2011/Metadata).
  *
@@ -14,6 +18,21 @@ package com.microsoft.schemas.xrm._2011.metadata.impl;
 public class EntityFiltersImpl extends org.apache.xmlbeans.impl.values.XmlListImpl implements com.microsoft.schemas.xrm._2011.metadata.EntityFilters
 {
     private static final long serialVersionUID = 1L;
+
+    @Override
+    public List<?> listValue() {
+        return getListValue();
+    }
+
+    @Override
+    public List<?> xlistValue() {
+        return xgetListValue();
+    }
+
+    @Override
+    public void set(List<?> list) {
+        setListValue(list);
+    }
     
     public EntityFiltersImpl(org.apache.xmlbeans.SchemaType sType)
     {
@@ -32,6 +51,16 @@ public class EntityFiltersImpl extends org.apache.xmlbeans.impl.values.XmlListIm
     public static class ItemImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements com.microsoft.schemas.xrm._2011.metadata.EntityFilters.Item
     {
         private static final long serialVersionUID = 1L;
+
+        @Override
+        public StringEnumAbstractBase enumValue() {
+            return getEnumValue();
+        }
+
+        @Override
+        public void set(StringEnumAbstractBase e) {
+            setEnumValue(e);
+        }
         
         public ItemImpl(org.apache.xmlbeans.SchemaType sType)
         {

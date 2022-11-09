@@ -3,10 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.talend.components</groupId>
 	<artifactId>talend-mscrm</artifactId>
-	<version>3.14-20220707</version>
+	<version>3.15-20221103</version>
 	<packaging>jar</packaging>
-	
+
 	<name>talend-mscrm</name>
+
 	<licenses>
 		<license>
 			<name>Apache License, Version 2.0</name>
@@ -14,14 +15,15 @@
 			<distribution>may be downloaded from the Maven repository</distribution>
 		</license>
 	</licenses>
-	
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<talend.nexus.url>https://artifacts-oss.talend.com</talend.nexus.url>
 
 		<odata.version>4.7.1</odata.version>
 		<slf4j.version>1.7.12</slf4j.version>
-		<axis2.version>1.7.9</axis2.version>
+		<axis2.version>1.8.2</axis2.version>
+		<xmlbeans.version>5.1.1</xmlbeans.version>
 		<httpclient.version>4.5.13</httpclient.version>
 		<httpcore.version>4.4.13</httpcore.version>
 		<junit.version>4.13.2</junit.version>
@@ -70,10 +72,22 @@
 	</distributionManagement>
 
 	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.apache.xmlbeans/xmlbeans -->
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
 			<artifactId>axis2-xmlbeans</artifactId>
 			<version>${axis2.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.xmlbeans</groupId>
+					<artifactId>xmlbeans</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlbeans</groupId>
+			<artifactId>xmlbeans</artifactId>
+			<version>${xmlbeans.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.reload4j</groupId>
@@ -151,7 +165,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
+            <version>${jackson-databind.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

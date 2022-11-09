@@ -6,6 +6,9 @@
  * Automatically generated - do not modify.
  */
 package org.datacontract.schemas._2004._07.microsoft_crm_sdk_messages.impl;
+
+import org.apache.xmlbeans.StringEnumAbstractBase;
+
 /**
  * An XML BusinessNotificationSeverity(@http://schemas.datacontract.org/2004/07/Microsoft.Crm.Sdk.Messages).
  *
@@ -14,6 +17,16 @@ package org.datacontract.schemas._2004._07.microsoft_crm_sdk_messages.impl;
 public class BusinessNotificationSeverityImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements org.datacontract.schemas._2004._07.microsoft_crm_sdk_messages.BusinessNotificationSeverity
 {
     private static final long serialVersionUID = 1L;
+
+    @Override
+    public StringEnumAbstractBase enumValue() {
+        return getEnumValue();
+    }
+
+    @Override
+    public void set(StringEnumAbstractBase e) {
+        setEnumValue(e);
+    }
     
     public BusinessNotificationSeverityImpl(org.apache.xmlbeans.SchemaType sType)
     {

@@ -64,7 +64,7 @@ public interface RootAttribute extends org.apache.xmlbeans.XmlObject
          * of this type.
          */
         
-        public static final class Factory
+        static final class StaticFactory
         {
             public static org.xmlsoap.schemas.soap.encoding.RootAttribute.Root newValue(java.lang.Object obj) {
               return (org.xmlsoap.schemas.soap.encoding.RootAttribute.Root) type.newValue( obj ); }
@@ -75,7 +75,7 @@ public interface RootAttribute extends org.apache.xmlbeans.XmlObject
             public static org.xmlsoap.schemas.soap.encoding.RootAttribute.Root newInstance(org.apache.xmlbeans.XmlOptions options) {
               return (org.xmlsoap.schemas.soap.encoding.RootAttribute.Root) org.apache.xmlbeans.XmlBeans.getContextTypeLoader().newInstance( type, options ); }
             
-            private Factory() { } // No instance of this class allowed
+            private StaticFactory() { } // No instance of this class allowed
         }
     }
     
@@ -84,7 +84,7 @@ public interface RootAttribute extends org.apache.xmlbeans.XmlObject
      * of this type.
      */
     
-    public static final class Factory
+    static final class StaticFactory
     {
         public static org.xmlsoap.schemas.soap.encoding.RootAttribute newInstance() {
           return (org.xmlsoap.schemas.soap.encoding.RootAttribute) org.apache.xmlbeans.XmlBeans.getContextTypeLoader().newInstance( type, null ); }
@@ -136,22 +136,6 @@ public interface RootAttribute extends org.apache.xmlbeans.XmlObject
         public static org.xmlsoap.schemas.soap.encoding.RootAttribute parse(org.w3c.dom.Node node, org.apache.xmlbeans.XmlOptions options) throws org.apache.xmlbeans.XmlException {
           return (org.xmlsoap.schemas.soap.encoding.RootAttribute) org.apache.xmlbeans.XmlBeans.getContextTypeLoader().parse( node, type, options ); }
         
-        /** @deprecated {@link org.apache.xmlbeans.xml.stream.XMLInputStream} */
-        public static org.xmlsoap.schemas.soap.encoding.RootAttribute parse(org.apache.xmlbeans.xml.stream.XMLInputStream xis) throws org.apache.xmlbeans.XmlException, org.apache.xmlbeans.xml.stream.XMLStreamException {
-          return (org.xmlsoap.schemas.soap.encoding.RootAttribute) org.apache.xmlbeans.XmlBeans.getContextTypeLoader().parse( xis, type, null ); }
-        
-        /** @deprecated {@link org.apache.xmlbeans.xml.stream.XMLInputStream} */
-        public static org.xmlsoap.schemas.soap.encoding.RootAttribute parse(org.apache.xmlbeans.xml.stream.XMLInputStream xis, org.apache.xmlbeans.XmlOptions options) throws org.apache.xmlbeans.XmlException, org.apache.xmlbeans.xml.stream.XMLStreamException {
-          return (org.xmlsoap.schemas.soap.encoding.RootAttribute) org.apache.xmlbeans.XmlBeans.getContextTypeLoader().parse( xis, type, options ); }
-        
-        /** @deprecated {@link org.apache.xmlbeans.xml.stream.XMLInputStream} */
-        public static org.apache.xmlbeans.xml.stream.XMLInputStream newValidatingXMLInputStream(org.apache.xmlbeans.xml.stream.XMLInputStream xis) throws org.apache.xmlbeans.XmlException, org.apache.xmlbeans.xml.stream.XMLStreamException {
-          return org.apache.xmlbeans.XmlBeans.getContextTypeLoader().newValidatingXMLInputStream( xis, type, null ); }
-        
-        /** @deprecated {@link org.apache.xmlbeans.xml.stream.XMLInputStream} */
-        public static org.apache.xmlbeans.xml.stream.XMLInputStream newValidatingXMLInputStream(org.apache.xmlbeans.xml.stream.XMLInputStream xis, org.apache.xmlbeans.XmlOptions options) throws org.apache.xmlbeans.XmlException, org.apache.xmlbeans.xml.stream.XMLStreamException {
-          return org.apache.xmlbeans.XmlBeans.getContextTypeLoader().newValidatingXMLInputStream( xis, type, options ); }
-        
-        private Factory() { } // No instance of this class allowed
+        private StaticFactory() { } // No instance of this class allowed
     }
 }

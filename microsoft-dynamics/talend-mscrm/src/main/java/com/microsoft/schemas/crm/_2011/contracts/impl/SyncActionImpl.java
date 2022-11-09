@@ -6,6 +6,9 @@
  * Automatically generated - do not modify.
  */
 package com.microsoft.schemas.crm._2011.contracts.impl;
+
+import org.apache.xmlbeans.StringEnumAbstractBase;
+
 /**
  * An XML SyncAction(@http://schemas.microsoft.com/crm/2011/Contracts).
  *
@@ -14,6 +17,16 @@ package com.microsoft.schemas.crm._2011.contracts.impl;
 public class SyncActionImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements com.microsoft.schemas.crm._2011.contracts.SyncAction
 {
     private static final long serialVersionUID = 1L;
+
+    @Override
+    public StringEnumAbstractBase enumValue() {
+        return getEnumValue();
+    }
+
+    @Override
+    public void set(StringEnumAbstractBase e) {
+        setEnumValue(e);
+    }
     
     public SyncActionImpl(org.apache.xmlbeans.SchemaType sType)
     {

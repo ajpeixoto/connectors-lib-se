@@ -6,6 +6,9 @@
  * Automatically generated - do not modify.
  */
 package com.microsoft.schemas.xrm._2011.contracts.impl;
+
+import org.apache.xmlbeans.StringEnumAbstractBase;
+
 /**
  * An XML ConditionOperator(@http://schemas.microsoft.com/xrm/2011/Contracts).
  *
@@ -14,6 +17,16 @@ package com.microsoft.schemas.xrm._2011.contracts.impl;
 public class ConditionOperatorImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements com.microsoft.schemas.xrm._2011.contracts.ConditionOperator
 {
     private static final long serialVersionUID = 1L;
+
+    @Override
+    public StringEnumAbstractBase enumValue() {
+        return getEnumValue();
+    }
+
+    @Override
+    public void set(StringEnumAbstractBase e) {
+        setEnumValue(e);
+    }
     
     public ConditionOperatorImpl(org.apache.xmlbeans.SchemaType sType)
     {

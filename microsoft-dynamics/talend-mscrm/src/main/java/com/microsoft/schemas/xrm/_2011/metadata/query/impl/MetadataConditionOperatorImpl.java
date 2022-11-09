@@ -6,6 +6,9 @@
  * Automatically generated - do not modify.
  */
 package com.microsoft.schemas.xrm._2011.metadata.query.impl;
+
+import org.apache.xmlbeans.StringEnumAbstractBase;
+
 /**
  * An XML MetadataConditionOperator(@http://schemas.microsoft.com/xrm/2011/Metadata/Query).
  *
@@ -14,6 +17,16 @@ package com.microsoft.schemas.xrm._2011.metadata.query.impl;
 public class MetadataConditionOperatorImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements com.microsoft.schemas.xrm._2011.metadata.query.MetadataConditionOperator
 {
     private static final long serialVersionUID = 1L;
+
+    @Override
+    public StringEnumAbstractBase enumValue() {
+        return getEnumValue();
+    }
+
+    @Override
+    public void set(StringEnumAbstractBase e) {
+        setEnumValue(e);
+    }
     
     public MetadataConditionOperatorImpl(org.apache.xmlbeans.SchemaType sType)
     {
