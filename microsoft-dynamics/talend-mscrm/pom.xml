@@ -5,8 +5,9 @@
 	<artifactId>talend-mscrm</artifactId>
 	<version>3.14-20220707</version>
 	<packaging>jar</packaging>
-	
+
 	<name>talend-mscrm</name>
+
 	<licenses>
 		<license>
 			<name>Apache License, Version 2.0</name>
@@ -14,7 +15,7 @@
 			<distribution>may be downloaded from the Maven repository</distribution>
 		</license>
 	</licenses>
-	
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<talend.nexus.url>https://artifacts-oss.talend.com</talend.nexus.url>
@@ -151,7 +152,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
+            <version>${jackson-databind.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
