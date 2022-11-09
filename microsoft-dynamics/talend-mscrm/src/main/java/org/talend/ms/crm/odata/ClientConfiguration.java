@@ -21,21 +21,15 @@ public final class ClientConfiguration {
      */
     public static enum AuthStrategyEnum {NTLM, OAUTH, OAUTH_PREMISE, OAUTH_ROPC_PREMISE}
 
-    ;
-
     /*
      * Kind of registered app on azure
      */
     public static enum AppRegisteredType {NATIVE_APP, WEB_APP}
 
-    ;
-
     /*
      * If Web app, permission type
      */
-    public static enum WebAppPermission {DELEGATED}
-
-    ; // MS CRM only accept DELEGATED PERMISSION, not APPLICATION PERMISSION
+    public static enum WebAppPermission {DELEGATED} // MS CRM only accept DELEGATED PERMISSION, not APPLICATION PERMISSION
 
     /*
      * This would be obtained after you register the Dynamic CRM in Active Directory on the Microsoft Azure portal
