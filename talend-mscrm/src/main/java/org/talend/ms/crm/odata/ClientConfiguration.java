@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2021 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2022 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -19,17 +19,17 @@ public final class ClientConfiguration {
     /*
      * Implemented authentication strategies for OData/MS CRM.
      */
-    public static enum AuthStrategyEnum {NTLM, OAUTH, OAUTH_PREMISE, OAUTH_ROPC_PREMISE}
+    public static enum AuthStrategyEnum {NTLM, OAUTH, OAUTH_PREMISE};
 
     /*
      * Kind of registered app on azure
      */
-    public static enum AppRegisteredType {NATIVE_APP, WEB_APP}
+    public static enum AppRegisteredType {NATIVE_APP, WEB_APP};
 
     /*
      * If Web app, permission type
      */
-    public static enum WebAppPermission {DELEGATED} // MS CRM only accept DELEGATED PERMISSION, not APPLICATION PERMISSION
+    public static enum WebAppPermission {DELEGATED}; // MS CRM only accept DELEGATED PERMISSION, not APPLICATION PERMISSION
 
     /*
      * This would be obtained after you register the Dynamic CRM in Active Directory on the Microsoft Azure portal
@@ -45,11 +45,6 @@ public final class ClientConfiguration {
      * Identifier of the target resource that is the recipient of the requested token.
      */
     private String resource;
-
-    /*
-     * Scopes with a space delimitation
-     */
-    private String scope;
 
     /*
      * Username of the managed or federated user.
@@ -75,11 +70,6 @@ public final class ClientConfiguration {
      * The URL of the authenticating authority
      */
     private String authoryEndpoint;
-
-    /*
-     * The OAuth token endpoint for ROPC
-     */
-    private String oauthTokenEndpoint;
 
     /*
      * The redirect URL
@@ -162,14 +152,6 @@ public final class ClientConfiguration {
         this.resource = resource;
     }
 
-    public String getScope() {
-        return this.scope;
-    }
-
-    public void setScope(String scope) {
-        this.scope = scope;
-    }
-
     public String getUserName() {
         return userName;
     }
@@ -193,15 +175,6 @@ public final class ClientConfiguration {
     public void setAuthoryEndpoint(String authoryEndpoint) {
         this.authoryEndpoint = authoryEndpoint;
     }
-
-    public String getOAuthTokenEndpoint() {
-        return this.oauthTokenEndpoint;
-    }
-
-    public void setOAuthTokenEndpoint(String oauthTokenEndpoint) {
-        this.oauthTokenEndpoint = oauthTokenEndpoint;
-    }
-
 
     public int getMaxRetryTimes() {
         return maxRetryTimes;

@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2021 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2022 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -35,9 +35,6 @@ public final class AuthStrategyFactory {
                 break;
             case OAUTH_PREMISE:
                 authStrategy = new OAuthPremiseStrategyImpl(conf);
-                break;
-            case OAUTH_ROPC_PREMISE:
-                authStrategy = new OAuthPremiseROPCStrategyImpl(conf);
                 break;
         }
 

@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2021 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2022 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -13,12 +13,14 @@
 package org.talend.ms.crm.odata.authentication;
 
 import java.net.Proxy;
-import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
 import javax.naming.AuthenticationException;
 import javax.naming.ServiceUnavailableException;
+
+import com.microsoft.aad.adal4j.ClientCredential;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -26,19 +28,15 @@ import org.talend.ms.crm.odata.ClientConfiguration;
 import org.talend.ms.crm.odata.ProxyProvider;
 import org.talend.ms.crm.odata.httpclientfactory.IHttpclientFactoryObservable;
 import org.talend.ms.crm.odata.httpclientfactory.OAuthHttpClientFactory;
-import com.microsoft.aad.msal4j.ClientCredentialFactory;
-import com.microsoft.aad.msal4j.ClientCredentialParameters;
-import com.microsoft.aad.msal4j.ConfidentialClientApplication;
-import com.microsoft.aad.msal4j.IAuthenticationResult;
-import com.microsoft.aad.msal4j.OauthClientApplication;
-import com.microsoft.aad.msal4j.PublicClientApplication;
-import com.microsoft.aad.msal4j.UserNamePasswordParameters;
+
+import com.microsoft.aad.adal4j.AuthenticationContext;
+import com.microsoft.aad.adal4j.AuthenticationResult;
 
 public class OAuthStrategyImpl implements IAuthStrategy {
 
     private ClientConfiguration conf;
 
-    private IAuthenticationResult authResult;
+    private AuthenticationResult authResult;
 
     private IHttpclientFactoryObservable httpClientFactory;
 
@@ -73,12 +71,12 @@ public class OAuthStrategyImpl implements IAuthStrategy {
 
     @Override
     public void configureRequest(ODataRequest request) {
-        request.addCustomHeader(HttpHeader.AUTHORIZATION, "Bearer " + authResult.accessToken());
+        request.addCustomHeader(HttpHeader.AUTHORIZATION, "Bearer " + authResult.getAccessToken());
     }
 
     @Override
     public void configureRequest(HttpRequestBase request) {
-        request.addHeader(HttpHeader.AUTHORIZATION, "Bearer " + authResult.accessToken());
+        request.addHeader(HttpHeader.AUTHORIZATION, "Bearer " + authResult.getAccessToken());
     }
 
     @Override
@@ -117,71 +115,34 @@ public class OAuthStrategyImpl implements IAuthStrategy {
         }
     }
 
-    private Future<IAuthenticationResult> acquireToken(PublicClientApplication context) throws Exception {
-        Future<IAuthenticationResult> future;
-            UserNamePasswordParameters parameters = UserNamePasswordParameters.builder(
-                    Collections.singleton(conf.getResource() + "/.default"), conf.getUserName(), conf.getPassword().toCharArray()).build();
-            future = context.acquireToken(parameters);
-            return future;
+    private Future<AuthenticationResult> acquireToken(AuthenticationContext context) throws Exception {
+        Future<AuthenticationResult> future;
 
-    }
-    private Future<IAuthenticationResult> acquireToken(OauthClientApplication context) throws Exception {
-        ClientCredentialParameters parameters = ClientCredentialParameters.builder(
-                Collections.singleton(conf.getResource() + "/.default")).build();
-        return context.acquireToken(parameters);
-    }
-
-    private IAuthenticationResult getAccessToken() throws ServiceUnavailableException {
         if(conf.getAppRegisteredType() == ClientConfiguration.AppRegisteredType.NATIVE_APP){
-            return getAccessTokenNative();
-        } if(conf.getAppRegisteredType() == ClientConfiguration.AppRegisteredType.WEB_APP && conf.getWebAppPermission() == ClientConfiguration.WebAppPermission.DELEGATED){
-            return getAccessTokenWebApp();
-        } else {
-            throw new RuntimeException("Can't retrieve token with this configuration : registered application type: "+conf.getAppRegisteredType()+", Web application permission: "+conf.getWebAppPermission());
+            future = context.acquireToken(conf.getResource(), conf.getClientId(), conf.getUserName(), conf.getPassword(), null);
         }
+        else if(conf.getAppRegisteredType() == ClientConfiguration.AppRegisteredType.WEB_APP && conf.getWebAppPermission() == ClientConfiguration.WebAppPermission.DELEGATED){
+            future = context.acquireToken(conf.getResource(), new ClientCredential(conf.getClientId(), conf.getClientSecret()), conf.getUserName(), conf.getPassword(), null);
+        }
+        else{
+            throw new Exception("Can't retrieve token with this configuration : registered application type: "+conf.getAppRegisteredType()+", Web application permission: "+conf.getWebAppPermission());
+        }
+
+        return future;
     }
 
-    private IAuthenticationResult getAccessTokenNative() throws ServiceUnavailableException {
-        PublicClientApplication context = null;
-        IAuthenticationResult result = null;
+    private AuthenticationResult getAccessToken() throws ServiceUnavailableException {
+        AuthenticationContext context = null;
+        AuthenticationResult result = null;
         ExecutorService service = null;
         try {
             service = Executors.newFixedThreadPool(1);
-            Proxy proxy = ProxyProvider.getProxy();
-            PublicClientApplication.Builder contextBuilder = PublicClientApplication.builder(conf.getClientId()).authority("https://login.microsoftonline.com/organizations");
-            if (proxy != null) {
-                contextBuilder = contextBuilder.proxy(proxy);
-            }
-            context = contextBuilder.build();
-            Future<IAuthenticationResult> future = this.acquireToken(context);
-            result = future.get();
-        } catch (Exception e) {
-            throw new ServiceUnavailableException(e.getMessage());
-        } finally {
-            service.shutdown();
-        }
-
-        if (result == null) {
-            throw new ServiceUnavailableException("Authenticated failed! Please check your configuration!");
-        }
-        return result;
-    }
-
-    private IAuthenticationResult getAccessTokenWebApp() throws ServiceUnavailableException {
-        OauthClientApplication context = null;
-        IAuthenticationResult result = null;
-        ExecutorService service = null;
-        try {
-            service = Executors.newFixedThreadPool(1);
-            OauthClientApplication.Builder contextBuilder = OauthClientApplication.builder(conf.getClientId(),
-                    ClientCredentialFactory.createFromSecret(conf.getClientSecret()), conf.getUserName(), conf.getPassword())
-                    .authority(conf.getAuthoryEndpoint());
+            context = new AuthenticationContext(conf.getAuthoryEndpoint(), false, service);
             Proxy proxy = ProxyProvider.getProxy();
             if (proxy != null) {
-                contextBuilder.proxy(proxy);
+                context.setProxy(proxy);
             }
-            context = contextBuilder.build();
-            Future<IAuthenticationResult> future = this.acquireToken(context);
+            Future<AuthenticationResult> future = this.acquireToken(context);
             result = future.get();
         } catch (Exception e) {
             throw new ServiceUnavailableException(e.getMessage());

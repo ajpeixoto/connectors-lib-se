@@ -149,6 +149,7 @@ public class OAuthPremiseStrategyImpl implements IAuthStrategy {
         if(conf.getClientSecret() != null && !"".equals(conf.getClientSecret().trim())){
             body.put("client_secret", conf.getClientSecret());
         }
+
         RequestHttpContext queryContext = new RequestHttpContext("POST",
                 computeTokenUrl(conf.getAuthoryEndpoint()),
                 Collections.emptyMap(),

@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2021 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2022 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -73,22 +73,5 @@ public class ClientConfigurationFactory {
 
         return clientConfiguration;
     }
-
-    public final static ClientConfiguration buildOAuthPremiseROPCClientConfiguration(String userName, String password, String oauthTokenEndpoint,
-                                                                                     String serviceAPI, String clientId, String clientSecret,
-                                                                                     String forcedResource, String scope) {
-        ClientConfiguration clientConfiguration = new ClientConfiguration(AuthStrategyEnum.OAUTH_ROPC_PREMISE);
-        clientConfiguration.setUserName(userName);
-        clientConfiguration.setPassword(password);
-        clientConfiguration.setOAuthTokenEndpoint(oauthTokenEndpoint);
-        clientConfiguration.setClientId(clientId);
-        clientConfiguration.setClientSecret(clientSecret);
-        clientConfiguration.setServiceAPI(serviceAPI);
-        clientConfiguration.setForceResource(forcedResource);
-        clientConfiguration.setScope(scope);
-
-        return clientConfiguration;
-    }
-
 
 }

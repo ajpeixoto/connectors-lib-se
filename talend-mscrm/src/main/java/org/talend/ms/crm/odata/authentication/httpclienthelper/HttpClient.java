@@ -59,9 +59,7 @@ public final class HttpClient {
             redirect = true;
         }
 
-
         final Optional<String> location = response.getFirstValueHeader("location");
-
 
         if (!redirect || !location.isPresent() || nbR <= 0) {
             return response;
