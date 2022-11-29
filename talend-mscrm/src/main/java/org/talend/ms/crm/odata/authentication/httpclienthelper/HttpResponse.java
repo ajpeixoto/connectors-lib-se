@@ -82,12 +82,12 @@ public final class HttpResponse {
             return Optional.empty();
         }
 
-        final List<String> ss = values.get();
-        if(ss.size() <= 0){
+        final List<String> v = values.get();
+        if (v.size() <= 0) {
             return Optional.empty();
         }
 
-        return Optional.ofNullable(ss.get(0));
+        return Optional.ofNullable(v.get(0));
     }
 
     public String getBody() {
