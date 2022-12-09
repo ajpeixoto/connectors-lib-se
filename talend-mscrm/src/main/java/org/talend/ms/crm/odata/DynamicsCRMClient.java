@@ -131,7 +131,6 @@ public class DynamicsCRMClient implements IHttpClientFactoryObserver {
         }
 
         authStrategy = AuthStrategyFactory.createAuthStrategy(this.clientConfiguration);
-        authStrategy.init();
 
         httpClientFactory = authStrategy.getHttpClientFactory();
         httpClientFactory.addListener(this);
