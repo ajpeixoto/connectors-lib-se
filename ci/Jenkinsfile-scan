@@ -1,0 +1,124 @@
+/**
+ * Copyright (C) 2006-2022 Talend Inc. - www.talend.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+final def slackChannel = 'components-ci'
+final def veracodeCredentials = usernamePassword(
+        credentialsId: 'veracode-api-credentials',
+        passwordVariable: 'VERACODE_KEY',
+        usernameVariable: 'VERACODE_ID')
+
+final def podLabel = "connectors-lib-se-scan-${UUID.randomUUID().toString()}".take(53)
+final def m2 = "/tmp/jenkins/tdi/m2/"
+
+pipeline {
+    agent {
+        kubernetes {
+            label podLabel
+            yaml """
+apiVersion: v1
+kind: Pod
+spec:
+    containers:
+        -
+            name: main
+            image: '${env.TSBI_IMAGE}'
+            command: [cat]
+            tty: true
+            volumeMounts: [
+                {name: docker, mountPath: /var/run/docker.sock},
+                {name: m2main, mountPath: /root/.m2/repository}
+            ]
+            resources: {requests: {memory: 3G, cpu: '2.5'}, limits: {memory: 3G, cpu: '2.5'}}
+    volumes:
+        -
+            name: docker
+            hostPath: {path: /var/run/docker.sock}
+        -
+            name: m2main
+            hostPath: {path: ${m2} }
+    imagePullSecrets:
+        - name: talend-registry
+"""
+        }
+    }
+
+    environment {
+        MAVEN_OPTS = '-Dmaven.artifact.threads=128 -Dorg.slf4j.simpleLogger.showThreadName=true -Dorg.slf4j.simpleLogger.showDateTime=true -Dorg.slf4j.simpleLogger.dateTimeFormat=HH:mm:ss'
+        TALEND_REGISTRY = 'registry.datapwn.com'
+
+        VERACODE_APP_NAME = 'Components'
+        VERACODE_SANDBOX = 'connectors-lib-se'
+        APP_ID = '579232'
+    }
+
+    options {
+        buildDiscarder(logRotator(artifactNumToKeepStr: '5', numToKeepStr: '5'))
+        timeout(time: 60, unit: 'MINUTES')
+        skipStagesAfterUnstable()
+    }
+
+    triggers {
+        cron(env.BRANCH_NAME == 'main' ? '0 5 * * 0' : '')
+    }
+
+    stages {
+        stage("SourceClear analysis") {
+            steps {
+                container('main') {
+                    withCredentials([string(credentialsId: 'veracode-token', variable: 'SRCCLR_API_TOKEN')]) {
+                        sh '''#!/bin/bash
+                          curl -sSL https://download.sourceclear.com/ci.sh | SRCCLR_API_TOKEN=${SRCCLR_API_TOKEN} DEBUG=1 sh -s -- scan --allow-dirty --recursive --skip-collectors npm;
+                        '''
+                    }
+                }
+            }
+        }
+        stage('Vera code') {
+            steps {
+                container('main') {
+                    sh "mvn -U -B clean package -Dmaven.test.skip=true"
+                    withCredentials([veracodeCredentials]) {
+                        veracode applicationName: "$VERACODE_SANDBOX",
+                                teams: "Components",
+                                canFailJob: true,
+                                createProfile: true,
+                                criticality: "High",
+                                debug: true,
+                                copyRemoteFiles: true,
+                                fileNamePattern: '',
+                                useProxy: false,
+                                replacementPattern: '',
+                                scanExcludesPattern: '',
+                                scanIncludesPattern: '',
+                                scanName: "master-${currentBuild.number}-${currentBuild.startTimeInMillis}",
+                                uploadExcludesPattern: '',
+                                uploadIncludesPattern: '**/*.jar',
+                                waitForScan: true,
+                                vid: "$VERACODE_ID",
+                                vkey: "$VERACODE_KEY"
+                    }
+                }
+            }
+        }
+    }
+    post {
+        success {
+            slackSend(color: '#00FF00', message: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})", channel: "${slackChannel}")
+        }
+        failure {
+            slackSend(color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})", channel: "${slackChannel}")
+        }
+    }
+}
