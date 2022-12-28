@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 final String slackChannel = 'components-ci'
-final String nexusCredentials = usernamePassword(credentialsId: 'nexus-artifact-zl-credentials', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASSWORD')
+final nexusCredentials = usernamePassword(
+        credentialsId: 'nexus-artifact-zl-credentials',
+        usernameVariable: 'NEXUS_USER',
+        passwordVariable: 'NEXUS_PASSWORD')
 final String podLabel = "connectors-lib-se-${UUID.randomUUID().toString()}".take(53)
 final String tsbiImage = 'jdk11-svc-springboot-builder'
 final String tsbiVersion = '2.9.18-2.4-20220104141654'
