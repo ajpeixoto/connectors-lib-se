@@ -234,12 +234,17 @@ public final class DeviceIdManager {
 
             // Parse the response in a XML document.
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            
+
             try {
-	            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-	            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+                factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             } catch (Exception e) {
-            	Log.warn("failed to enable xml safe feature");
+                Log.warn("Failed to enable xml safe feature: " + XMLConstants.FEATURE_SECURE_PROCESSING);
+            }
+
+            try {
+                factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            } catch (Exception e) {
+                Log.warn("failed to enable xml safe feature");
             }
             
             DocumentBuilder builder = factory.newDocumentBuilder();
