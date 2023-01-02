@@ -52,7 +52,7 @@ import com.microsoft.schemas.xrm._2011.contracts.OrganizationServiceStub;
 
 // ============================================================================
 //
-// Copyright (C) 2006-2021 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2023 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
