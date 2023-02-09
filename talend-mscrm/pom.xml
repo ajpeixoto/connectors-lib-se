@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.talend.components</groupId>
     <artifactId>talend-mscrm</artifactId>
-    <version>3.10.3-20221123</version>
+    <version>3.10.3-20230119</version>
     <packaging>jar</packaging>
     <description>A forked Talend-MSCRM library, developed to use in Studio 7.3.1 only. It's main intention is to contain CVE fixes.</description>
 
@@ -23,7 +23,7 @@
 
         <odata.version>4.7.1</odata.version>
         <slf4j.version>1.7.28</slf4j.version>
-        <axis2.version>1.7.9</axis2.version>
+        <axis2.version>1.8.2</axis2.version>
         <httpclient.version>4.5.13</httpclient.version>
         <httpcore.version>4.4.13</httpcore.version>
         <junit.version>4.13.2</junit.version>
