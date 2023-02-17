@@ -1,6 +1,10 @@
 package org.talend;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,7 +33,7 @@ public class ExcelTool {
     private Sheet sheet = null;
 
     private Workbook preWb = null;
-    
+
     private Sheet preSheet = null;
 
     private Row curRow = null;
@@ -43,7 +47,7 @@ public class ExcelTool {
     private boolean appendWorkbook = false;
 
     private boolean appendSheet = false;
-    
+
     private boolean streamingAppend = false;
 
     private int startX = 0;
@@ -74,8 +78,10 @@ public class ExcelTool {
 
     private static final int CELL_CHARACTERS_LIMIT = 32767;
 
+    private boolean useSharedStringsTable = false;
+
     private String password = null;
-    
+
     private Map<CellStyle, CellStyle> existedOriginToClone;
 
     public ExcelTool() {
@@ -85,7 +91,7 @@ public class ExcelTool {
     public void setAppend(boolean appendWorkbook, boolean appendSheet, boolean streamingAppend) {
         this.appendWorkbook = appendWorkbook;
         this.appendSheet = appendSheet;
-        if(this.appendWorkbook) {
+        if (this.appendWorkbook) {
             this.streamingAppend = streamingAppend;
         }
     }
@@ -107,8 +113,7 @@ public class ExcelTool {
 
     public void prepareStream() {
         streamingAppend = false;
-
-        wb = new SXSSFWorkbook(rowAccessWindowSize);
+        wb = new SXSSFWorkbook(null, rowAccessWindowSize, false, useSharedStringsTable);
         sheet = wb.createSheet(sheetName);
         if (isAbsY) {
             startX = absX;
@@ -126,11 +131,11 @@ public class ExcelTool {
                 appendActionForFile(fileName);
             } else {
                 xlsxFile.delete();
-                wb = new SXSSFWorkbook(rowAccessWindowSize);
+                wb = new SXSSFWorkbook(null, rowAccessWindowSize, false, useSharedStringsTable);
                 sheet = wb.createSheet(sheetName);
             }
         } else {
-            wb = new SXSSFWorkbook(rowAccessWindowSize);
+            wb = new SXSSFWorkbook(null, rowAccessWindowSize, false, useSharedStringsTable);
             sheet = wb.createSheet(sheetName);
         }
         if (isAbsY) {
@@ -149,11 +154,12 @@ public class ExcelTool {
                 appendActionForFile(fileName);
             } else {
                 xlsmFile.delete();
-                wb = new SXSSFWorkbook(new XSSFWorkbook(XSSFWorkbookType.XLSM), rowAccessWindowSize);
+                wb = new SXSSFWorkbook(new XSSFWorkbook(XSSFWorkbookType.XLSM), rowAccessWindowSize, false, useSharedStringsTable);
+
                 sheet = wb.createSheet(sheetName);
             }
         } else {
-            wb = new SXSSFWorkbook(new XSSFWorkbook(XSSFWorkbookType.XLSM), rowAccessWindowSize);
+            wb = new SXSSFWorkbook(new XSSFWorkbook(XSSFWorkbookType.XLSM), rowAccessWindowSize, false, useSharedStringsTable);
             sheet = wb.createSheet(sheetName);
         }
         if (isAbsY) {
@@ -168,8 +174,8 @@ public class ExcelTool {
 
             try (InputStream fis = new FileInputStream(fileName);
                  Workbook preWorkbookForAppend =
-                     StreamingReader.builder().rowCacheSize(100).bufferSize(4096)
-                         .password(password).open(fis)) {
+                         StreamingReader.builder().rowCacheSize(100).bufferSize(4096)
+                                 .password(password).open(fis)) {
 
                 Iterator<Sheet> sheets = preWorkbookForAppend.sheetIterator();
                 while (sheets.hasNext()) {
@@ -179,7 +185,7 @@ public class ExcelTool {
                         sheet = wb.createSheet(sheetName);
 
                         //need to skip the same name sheet if not append sheet
-                        if(!appendSheet) {
+                        if (!appendSheet) {
                             continue;
                         }
 
@@ -194,7 +200,7 @@ public class ExcelTool {
                     while (rows.hasNext()) {
                         curRow = targetSheet.createRow(y);
                         y++;
-                        if(targetSheet == sheet) {
+                        if (targetSheet == sheet) {
                             curY = y;// store the append point
                         }
                         xOffset = 0;
@@ -273,7 +279,6 @@ public class ExcelTool {
     }
 
     /**
-     *
      * @return start insert row index.
      */
     public int getStartRow() {
@@ -298,7 +303,7 @@ public class ExcelTool {
                 XSSFFont newFont = new XSSFFont();
                 newFont.setFontName(fontName);
                 Font existedFont = wb.findFont(newFont.getBold(), newFont.getColor(), newFont.getFontHeight(), newFont.getFontName(), newFont.getItalic(), newFont.getStrikeout(), newFont.getTypeOffset(), newFont.getUnderline());
-                if(existedFont!=null) {
+                if (existedFont != null) {
                     font = existedFont;
                 } else {
                     font = wb.createFont();
@@ -454,7 +459,7 @@ public class ExcelTool {
             }
 
             CellStyle targetCellStyle = existedOriginToClone.get(preCellStyle);
-            if(targetCellStyle==null) {
+            if (targetCellStyle == null) {
                 targetCellStyle = wb.createCellStyle();
                 targetCellStyle.cloneStyleFrom(preCellStyle);
                 existedOriginToClone.put(preCellStyle, targetCellStyle);
@@ -488,7 +493,7 @@ public class ExcelTool {
         addCell();
         String value = isTruncateExceedingCharacters && stringValue != null && stringValue.length() > CELL_CHARACTERS_LIMIT
                 ? stringValue.substring(0, CELL_CHARACTERS_LIMIT)
-                        : stringValue;
+                : stringValue;
         curCell.setCellValue(value);
         curCell.setCellStyle(getNormalCellStyle());
     }
@@ -551,7 +556,7 @@ public class ExcelTool {
         if (appendWorkbook && appendSheet && !streamingAppend && recalculateFormula) {
             evaluateFormulaCell();
         }
-        try (FileOutputStream fileOutput = new FileOutputStream(fileName); 
+        try (FileOutputStream fileOutput = new FileOutputStream(fileName);
              POIFSFileSystem fs = new POIFSFileSystem()) {
             if (password == null) {
                 wb.write(fileOutput);
@@ -603,6 +608,14 @@ public class ExcelTool {
 
     public void setTruncateExceedingCharacters(boolean isTruncateExceedingCharacters) {
         this.isTruncateExceedingCharacters = isTruncateExceedingCharacters;
+    }
+
+    public boolean isUseSharedStringTable() {
+        return useSharedStringsTable;
+    }
+
+    public void setUseSharedStringTable(boolean useSharedStringTable) {
+        this.useSharedStringsTable = useSharedStringTable;
     }
 
     public static void main(String[] args) throws Exception {
