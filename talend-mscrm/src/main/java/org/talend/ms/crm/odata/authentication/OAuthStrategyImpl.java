@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.ms.crm.odata.authentication;
 
+import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.util.Collections;
 import java.util.concurrent.ExecutorService;
@@ -30,6 +31,7 @@ import com.microsoft.aad.msal4j.ClientCredentialFactory;
 import com.microsoft.aad.msal4j.ClientCredentialParameters;
 import com.microsoft.aad.msal4j.ConfidentialClientApplication;
 import com.microsoft.aad.msal4j.IAuthenticationResult;
+import com.microsoft.aad.msal4j.IConfidentialClientApplication;
 import com.microsoft.aad.msal4j.OauthClientApplication;
 import com.microsoft.aad.msal4j.PublicClientApplication;
 import com.microsoft.aad.msal4j.UserNamePasswordParameters;
@@ -125,17 +127,17 @@ public class OAuthStrategyImpl implements IAuthStrategy {
             return future;
 
     }
-    private Future<IAuthenticationResult> acquireToken(OauthClientApplication context) throws Exception {
+    private Future<IAuthenticationResult> acquireToken(IConfidentialClientApplication context) throws Exception {
         ClientCredentialParameters parameters = ClientCredentialParameters.builder(
                 Collections.singleton(conf.getResource() + "/.default")).build();
         return context.acquireToken(parameters);
     }
 
     private IAuthenticationResult getAccessToken() throws ServiceUnavailableException {
-        if(conf.getAppRegisteredType() == ClientConfiguration.AppRegisteredType.NATIVE_APP){
+        if (conf.getAppRegisteredType() == ClientConfiguration.AppRegisteredType.NATIVE_APP){
             return getAccessTokenNative();
-        } if(conf.getAppRegisteredType() == ClientConfiguration.AppRegisteredType.WEB_APP && conf.getWebAppPermission() == ClientConfiguration.WebAppPermission.DELEGATED){
-            return getAccessTokenWebApp();
+        } else if (conf.getAppRegisteredType() == ClientConfiguration.AppRegisteredType.WEB_APP && conf.getWebAppPermission() == ClientConfiguration.WebAppPermission.DELEGATED) {
+        return getAccessTokenWebApp(conf.getWebAppPermission());
         } else {
             throw new RuntimeException("Can't retrieve token with this configuration : registered application type: "+conf.getAppRegisteredType()+", Web application permission: "+conf.getWebAppPermission());
         }
@@ -167,32 +169,55 @@ public class OAuthStrategyImpl implements IAuthStrategy {
         return result;
     }
 
-    private IAuthenticationResult getAccessTokenWebApp() throws ServiceUnavailableException {
-        OauthClientApplication context = null;
+
+    private IAuthenticationResult getAccessTokenWebApp(ClientConfiguration.WebAppPermission webAppPermission) throws ServiceUnavailableException {
+        IConfidentialClientApplication context = null;
         IAuthenticationResult result = null;
         ExecutorService service = null;
         try {
             service = Executors.newFixedThreadPool(1);
-            OauthClientApplication.Builder contextBuilder = OauthClientApplication.builder(conf.getClientId(),
-                    ClientCredentialFactory.createFromSecret(conf.getClientSecret()), conf.getUserName(), conf.getPassword())
-                    .authority(conf.getAuthoryEndpoint());
-            Proxy proxy = ProxyProvider.getProxy();
-            if (proxy != null) {
-                contextBuilder.proxy(proxy);
-            }
-            context = contextBuilder.build();
+            context = createAuthContext(webAppPermission);
             Future<IAuthenticationResult> future = this.acquireToken(context);
             result = future.get();
         } catch (Exception e) {
             throw new ServiceUnavailableException(e.getMessage());
         } finally {
-            service.shutdown();
+            if (service != null) {
+                service.shutdown();
+            }
         }
 
         if (result == null) {
             throw new ServiceUnavailableException("Authenticated failed! Please check your configuration!");
         }
         return result;
+    }
+
+    private IConfidentialClientApplication createAuthContext(ClientConfiguration.WebAppPermission webAppPermission)
+            throws MalformedURLException {
+        Proxy proxy = ProxyProvider.getProxy();
+        switch (webAppPermission) {
+            case DELEGATED:
+                OauthClientApplication.Builder delegatedContextBuilder = OauthClientApplication
+                        .builder(conf.getClientId(), ClientCredentialFactory.createFromSecret(conf.getClientSecret()),
+                                conf.getUserName(), conf.getPassword())
+                        .authority(conf.getAuthoryEndpoint());
+                if (proxy != null) {
+                    delegatedContextBuilder.proxy(proxy);
+                }
+                return delegatedContextBuilder.build();
+            case APPLICATION:
+                ConfidentialClientApplication.Builder applicationContextBuilder = ConfidentialClientApplication
+                        .builder(conf.getClientId(), ClientCredentialFactory.createFromSecret(conf.getClientSecret()))
+                        .authority(conf.getAuthoryEndpoint());
+                if (proxy != null) {
+                    applicationContextBuilder.proxy(proxy);
+                }
+                return applicationContextBuilder.build();
+            default:
+                throw new IllegalArgumentException("Unexpected client configuration. "
+                        + "WebAppPermission " + webAppPermission);
+        }
     }
 
 }
