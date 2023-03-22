@@ -33,6 +33,9 @@
 		<!-- plugin's versions -->
 		<maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+
+		<nimbus-jose-jwt.version>9.22</nimbus-jose-jwt.version>
+		<woodstox-core.version>6.4.0</woodstox-core.version>
 	</properties>
 
 	<repositories>
@@ -69,6 +72,21 @@
 			</releases>
 		</repository>
 	</distributionManagement>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.nimbusds</groupId>
+				<artifactId>nimbus-jose-jwt</artifactId>
+				<version>${nimbus-jose-jwt.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.woodstox</groupId>
+				<artifactId>woodstox-core</artifactId>
+				<version>${woodstox-core.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<dependencies>
 		<dependency>
