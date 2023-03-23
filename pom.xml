@@ -12,6 +12,7 @@
     <module>talend-mscrm</module>
     <module>soap</module>
     <module>talendcsv</module>
+	<module>talend-sql-injection-utils</module>
   </modules>
 
   <name>Connectors Library SE :: Aggregator</name>
