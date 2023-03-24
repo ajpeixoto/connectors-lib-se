@@ -136,10 +136,10 @@ public class OAuthStrategyImpl implements IAuthStrategy {
     private IAuthenticationResult getAccessToken() throws ServiceUnavailableException {
         if (conf.getAppRegisteredType() == ClientConfiguration.AppRegisteredType.NATIVE_APP){
             return getAccessTokenNative();
-        } else if (conf.getAppRegisteredType() == ClientConfiguration.AppRegisteredType.WEB_APP && conf.getWebAppPermission() == ClientConfiguration.WebAppPermission.DELEGATED) {
+        } else if (conf.getAppRegisteredType() == ClientConfiguration.AppRegisteredType.WEB_APP) {
         return getAccessTokenWebApp(conf.getWebAppPermission());
         } else {
-            throw new RuntimeException("Can't retrieve token with this configuration : registered application type: "+conf.getAppRegisteredType()+", Web application permission: "+conf.getWebAppPermission());
+            throw new IllegalArgumentException("Unexpected app gegistered type: " + conf.getAppRegisteredType());
         }
     }
 
