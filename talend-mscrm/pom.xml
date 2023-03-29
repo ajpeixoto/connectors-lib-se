@@ -37,6 +37,8 @@
 		<nimbus-jose-jwt.version>9.22</nimbus-jose-jwt.version>
 		<woodstox-core.version>6.4.0</woodstox-core.version>
 		<reactor-netty.version>1.0.25</reactor-netty.version>
+
+		<commons-fileupload.version>1.5</commons-fileupload.version>
 	</properties>
 
 	<repositories>
@@ -90,6 +92,11 @@
 				<groupId>io.projectreactor.netty</groupId>
 				<artifactId>reactor-netty-http</artifactId>
 				<version>${reactor-netty.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-fileupload</groupId>
+				<artifactId>commons-fileupload</artifactId>
+				<version>${commons-fileupload.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
