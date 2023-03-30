@@ -13,6 +13,7 @@
     <module>soap</module>
     <module>talendcsv</module>
 	<module>talend-sql-injection-utils</module>
+    <module>talend_file_enhanced</module>
   </modules>
 
   <name>Connectors Library SE :: Aggregator</name>
