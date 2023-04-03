@@ -2,7 +2,6 @@ package org.talend.fileprocess;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -39,16 +38,6 @@ public class CopyInputStreamUtil {
     }
 
     public InputStream getCopy() {
-        return (InputStream) new ByteArrayInputStream(_copy.toByteArray());
-    }
-
-    public static void main(String[] args) throws IOException {
-        FileInputStream in = new FileInputStream("C:/Documents and Settings/Administrator/Test.txt");
-        CopyInputStreamUtil util = new CopyInputStreamUtil(in);
-        InputStream copy = util.getCopy();
-        InputStream copy2 = util.getCopy();
-        System.out.println((char) copy.read());
-        copy.close();
-        System.out.println((char) copy2.read());
+        return new ByteArrayInputStream(_copy.toByteArray());
     }
 }

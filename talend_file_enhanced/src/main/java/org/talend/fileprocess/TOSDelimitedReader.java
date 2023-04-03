@@ -24,7 +24,6 @@ package org.talend.fileprocess;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Reader;
 
 /**
@@ -796,20 +795,4 @@ public class TOSDelimitedReader {
 
         // public static final boolean autoReallocateForHuge = true;
     }
-
-    public static void main(String[] args) throws IOException {
-        TOSDelimitedReader fid = new TOSDelimitedReader("D:\\talend\\talendFID\\in.csv", "ISO-8859-15", "", "\n", false);
-        int rowNum = 0;
-        while (fid.readRecord()) {
-            System.out.println("*********Row" + rowNum + "***********");
-            System.out.println("------Row------\n" + fid.getRowRecord());
-            int fieldNum = fid.getAvailableColumnsCount();
-            for (int k = 0; k < fieldNum; k++) {
-                System.out.println("------" + k + "------\n" + fid.get(k));
-            }
-            rowNum++;
-            System.out.println("\n\n");
-        }
-    }
-
 }
