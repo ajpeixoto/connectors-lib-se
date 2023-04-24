@@ -20,6 +20,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import javax.naming.AuthenticationException;
 import javax.naming.ServiceUnavailableException;
+
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -121,12 +122,13 @@ public class OAuthStrategyImpl implements IAuthStrategy {
 
     private Future<IAuthenticationResult> acquireToken(PublicClientApplication context) throws Exception {
         Future<IAuthenticationResult> future;
-            UserNamePasswordParameters parameters = UserNamePasswordParameters.builder(
-                    Collections.singleton(conf.getResource() + "/.default"), conf.getUserName(), conf.getPassword().toCharArray()).build();
-            future = context.acquireToken(parameters);
-            return future;
+        UserNamePasswordParameters parameters = UserNamePasswordParameters.builder(
+                Collections.singleton(conf.getResource() + "/.default"), conf.getUserName(), conf.getPassword().toCharArray()).build();
+        future = context.acquireToken(parameters);
+        return future;
 
     }
+
     private Future<IAuthenticationResult> acquireToken(IConfidentialClientApplication context) throws Exception {
         ClientCredentialParameters parameters = ClientCredentialParameters.builder(
                 Collections.singleton(conf.getResource() + "/.default")).build();
@@ -134,10 +136,10 @@ public class OAuthStrategyImpl implements IAuthStrategy {
     }
 
     private IAuthenticationResult getAccessToken() throws ServiceUnavailableException {
-        if (conf.getAppRegisteredType() == ClientConfiguration.AppRegisteredType.NATIVE_APP){
+        if (conf.getAppRegisteredType() == ClientConfiguration.AppRegisteredType.NATIVE_APP) {
             return getAccessTokenNative();
         } else if (conf.getAppRegisteredType() == ClientConfiguration.AppRegisteredType.WEB_APP) {
-        return getAccessTokenWebApp(conf.getWebAppPermission());
+            return getAccessTokenWebApp(conf.getWebAppPermission());
         } else {
             throw new IllegalArgumentException("Unexpected app gegistered type: " + conf.getAppRegisteredType());
         }
@@ -196,27 +198,27 @@ public class OAuthStrategyImpl implements IAuthStrategy {
     private IConfidentialClientApplication createAuthContext(ClientConfiguration.WebAppPermission webAppPermission)
             throws MalformedURLException {
         Proxy proxy = ProxyProvider.getProxy();
-        switch (webAppPermission) {
-            case DELEGATED:
-                OauthClientApplication.Builder delegatedContextBuilder = OauthClientApplication
-                        .builder(conf.getClientId(), ClientCredentialFactory.createFromSecret(conf.getClientSecret()),
-                                conf.getUserName(), conf.getPassword())
-                        .authority(conf.getAuthoryEndpoint());
-                if (proxy != null) {
-                    delegatedContextBuilder.proxy(proxy);
-                }
-                return delegatedContextBuilder.build();
-            case APPLICATION:
-                ConfidentialClientApplication.Builder applicationContextBuilder = ConfidentialClientApplication
-                        .builder(conf.getClientId(), ClientCredentialFactory.createFromSecret(conf.getClientSecret()))
-                        .authority(conf.getAuthoryEndpoint());
-                if (proxy != null) {
-                    applicationContextBuilder.proxy(proxy);
-                }
-                return applicationContextBuilder.build();
-            default:
-                throw new IllegalArgumentException("Unexpected client configuration. "
-                        + "WebAppPermission " + webAppPermission);
+
+        if (webAppPermission == ClientConfiguration.WebAppPermission.DELEGATED && conf.isUserNamePasswordSet()) {
+            OauthClientApplication.Builder delegatedContextBuilder = OauthClientApplication
+                    .builder(conf.getClientId(), ClientCredentialFactory.createFromSecret(conf.getClientSecret()),
+                            conf.getUserName(), conf.getPassword())
+                    .authority(conf.getAuthoryEndpoint());
+            if (proxy != null) {
+                delegatedContextBuilder.proxy(proxy);
+            }
+            return delegatedContextBuilder.build();
+        } else if (webAppPermission == ClientConfiguration.WebAppPermission.APPLICATION || (webAppPermission == ClientConfiguration.WebAppPermission.DELEGATED && !conf.isUserNamePasswordSet())) {
+            ConfidentialClientApplication.Builder applicationContextBuilder = ConfidentialClientApplication
+                    .builder(conf.getClientId(), ClientCredentialFactory.createFromSecret(conf.getClientSecret()))
+                    .authority(conf.getAuthoryEndpoint());
+            if (proxy != null) {
+                applicationContextBuilder.proxy(proxy);
+            }
+            return applicationContextBuilder.build();
+        } else {
+            throw new IllegalArgumentException("Unexpected client configuration. "
+                    + "WebAppPermission " + webAppPermission);
         }
     }
 

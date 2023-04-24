@@ -186,6 +186,10 @@ public final class ClientConfiguration {
         this.password = password;
     }
 
+    public boolean isUserNamePasswordSet(){
+        return this.getUserName() != null && this.getPassword() != null && !this.getUserName().trim().isEmpty() && !this.getPassword().trim().isEmpty();
+    }
+
     public String getAuthoryEndpoint() {
         return authoryEndpoint;
     }
