@@ -9,9 +9,16 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>talend-mscrm</module>
+    <module>azure-utils</module>
+    <module>simpleexcel</module>
     <module>soap</module>
+    <module>talend_file_enhanced</module>
     <module>talendcsv</module>
+    <module>talendExcel</module>
+    <module>talend-mscrm</module>
+    <module>talend-sql-injection-utils</module>
+    <module>talend-ws</module>
+    <module>talendzip</module>
   </modules>
 
   <name>Connectors Library SE :: Aggregator</name>
