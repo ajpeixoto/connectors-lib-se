@@ -1,10 +1,6 @@
 package org.talend.webservice.jaxb;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
@@ -16,6 +12,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,6 +24,7 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -61,9 +59,14 @@ import org.apache.cxf.common.util.ReflectionInvokationHandler.WrapReturn;
 import org.apache.cxf.common.util.ReflectionUtil;
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.common.util.SystemPropertyAction;
+import org.apache.cxf.helpers.DOMUtils;
+import org.apache.cxf.helpers.FileUtils;
 import org.apache.cxf.helpers.JavaUtils;
+import org.apache.cxf.staxutils.StaxUtils;
+import org.apache.cxf.tools.common.ToolConstants;
 import org.objectweb.asm.Opcodes;
 import org.talend.webservice.mapper.AnyTypeMapper;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -1183,5 +1186,32 @@ public final class JAXBUtils {
         protected Class<?> loadClass(String className, Class<?> cls, byte[] bytes) {
             return super.loadClass(className, cls, bytes);
         }
+    }
+
+    /**
+     * Write the binding sources to the temp files
+     */
+    public static List<String> writeInputSourcesToTempFiles(List<InputSource> bindingSources) {
+        List<String> fileNames = new ArrayList<>();
+        if (bindingSources != null || !bindingSources.isEmpty()) {
+            for (InputSource inputSource : bindingSources) {
+                try (BufferedReader reader = new BufferedReader(inputSource.getCharacterStream())) {
+                    File tempFile = FileUtils.createTempFile("customzied", ".xsd");
+                    String filePath = tempFile.getAbsolutePath();
+                    tempFile.deleteOnExit();
+                    try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            outputStream.write(line.getBytes("UTF-8"));
+                        }
+                    }
+                    fileNames.add(filePath);
+                } catch (Exception e) {
+                    // Keep the same as before
+                    e.printStackTrace();
+                }
+            }
+        }
+        return fileNames;
     }
 }

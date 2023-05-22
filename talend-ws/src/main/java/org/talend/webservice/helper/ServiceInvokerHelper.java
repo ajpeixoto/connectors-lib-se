@@ -16,6 +16,7 @@ import org.talend.webservice.helper.map.MapConverter;
 import org.talend.webservice.jaxb.JAXBUtils;
 import org.talend.webservice.jaxb.JAXBUtils.IdentifierType;
 import org.talend.webservice.mapper.*;
+import org.xml.sax.InputSource;
 
 import javax.wsdl.*;
 import javax.xml.bind.annotation.XmlSchema;
@@ -93,17 +94,15 @@ public class ServiceInvokerHelper implements ClassMapper {
 
         Set<String> namespaces = serviceDiscoveryHelper.getNamespaces();
 
-        bindingFiles = new ArrayList<String>(namespaces.size());
+        List<InputSource> bindingSources = new ArrayList<>(namespaces.size());
         for (String ns : namespaces) {
             String packageName = packagePrefix + JAXBUtils.namespaceURIToPackage(ns);
             namespacePackageMap.put(ns, packageName);
             packageNamespaceMap.put(packageName, ns);
 
-            File f = org.apache.cxf.tools.util.JAXBUtils.getPackageMappingSchemaBindingFile(ns, packageName);
-            f.deleteOnExit();
-            bindingFiles.add(f.getAbsolutePath());
+            bindingSources.add(org.apache.cxf.tools.util.JAXBUtils.getPackageMappingSchemaBinding(ns, packageName));
         }
-
+        bindingFiles = JAXBUtils.writeInputSourcesToTempFiles(bindingSources);
         mapperFactory = new MapperFactory(this, serviceDiscoveryHelper.getSchema());
     }
 
