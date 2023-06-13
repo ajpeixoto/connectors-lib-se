@@ -119,10 +119,10 @@ final class HttpHeaders {
     }
 
     private static String getProductVersion() {
-        String enabled = System.getProperty("mscrm.com.microsoft.aad.msal4j.HttpHeaders.force_package_version", "false");
+        String enabled = System.getProperty("talend.mscrm.com.microsoft.aad.msal4j.HttpHeaders.force_package_version", "false");
 
         if ("true".equals(enabled)) {
-            String version = System.getProperty("mscrm.com.microsoft.aad.msal4j.HttpHeaders.package_version", "1.0");
+            String version = System.getProperty("talend.mscrm.com.microsoft.aad.msal4j.HttpHeaders.package_version", "1.0");
             System.out.println(String.format("Overwrite com.microsoft.aad.msal4j.HttpHeaders package version to '%s'.", version));
             return version;
         }
