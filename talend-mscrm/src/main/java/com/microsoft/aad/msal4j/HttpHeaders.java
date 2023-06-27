@@ -7,12 +7,19 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.logging.Logger;
 
 /**
  * Class copied from https://raw.githubusercontent.com/AzureAD/microsoft-authentication-library-for-java/v1.11.2/src/main/java/com/microsoft/aad/msal4j/HttpHeaders.java
- * in oreder to be able to force the package version send has HTTP headers.
+ * in order to be able to force the package version send has HTTP headers.
+ * It is to fix: https://jira.talendforge.org/browse/TDI-49710
+ * Here is a the MSAL github issue: https://github.com/AzureAD/microsoft-authentication-library-for-java/issues/646
  */
 final class HttpHeaders {
+    private static final Logger log = Logger.getLogger(HttpHeaders.class.getName());
+
+    private final static String FORCE_PACKAGE_VERSION_PROPERTY = "talend.mscrm.com.microsoft.aad.msal4j.HttpHeaders.force_package_version";
+    private final static String PACKAGE_VERSION_PROPERTY = "talend.mscrm.com.microsoft.aad.msal4j.HttpHeaders.package_version";
 
     static final String PRODUCT_HEADER_NAME = "x-client-SKU";
     static final String PRODUCT_HEADER_VALUE = "MSAL.Java";
@@ -119,11 +126,11 @@ final class HttpHeaders {
     }
 
     private static String getProductVersion() {
-        String enabled = System.getProperty("talend.mscrm.com.microsoft.aad.msal4j.HttpHeaders.force_package_version", "false");
+        String enabled = System.getProperty(FORCE_PACKAGE_VERSION_PROPERTY, "false");
 
         if ("true".equals(enabled)) {
-            String version = System.getProperty("talend.mscrm.com.microsoft.aad.msal4j.HttpHeaders.package_version", "1.0");
-            System.out.println(String.format("Overwrite com.microsoft.aad.msal4j.HttpHeaders package version to '%s'.", version));
+            String version = System.getProperty(PACKAGE_VERSION_PROPERTY, "1.0");
+            log.warning(String.format("Overwrite com.microsoft.aad.msal4j.HttpHeaders package version to '%s'.", version));
             return version;
         }
 
