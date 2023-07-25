@@ -30,6 +30,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorkbookDocument;
 
+import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.InputStream;
 import java.text.DateFormat;
@@ -181,6 +182,11 @@ public class ExcelReader implements Callable {
             boolean formulasNotResults = false;
 
             XMLReader parser = XMLReaderFactory.createXMLReader();
+            parser.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            // This may not be strictly required as DTDs shouldn't be allowed at all, per previous line.
+            parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            parser.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            parser.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
             ContentHandler handler = new TalendXSSFSheetXMLHandler(styles, strings, sheetContentsHandler, formatter,
                     formulasNotResults, columnDateFormats);
             parser.setContentHandler(handler);
