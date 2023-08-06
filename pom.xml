@@ -19,6 +19,7 @@
     <module>talend-sql-injection-utils</module>
     <module>talend-ws</module>
     <module>talendzip</module>
+      <module>json-decorator</module>
   </modules>
 
   <name>Connectors Library SE :: Aggregator</name>
