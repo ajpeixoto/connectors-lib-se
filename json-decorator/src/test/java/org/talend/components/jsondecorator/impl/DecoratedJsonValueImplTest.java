@@ -17,18 +17,11 @@ import java.util.stream.Collectors;
 class DecoratedJsonValueImplTest {
 
     @Test
-    public void basic() {
+    public void ident() {
         JsonValue json = TestUtil.loadJson("/json/geologistsComplex.json");
 
         JsonDecoratorBuilder builder = JsonDecoratorFactoryImpl.getInstance().createBuilder();
         DecoratedJsonValue decoratedJsonValue = builder.build(json);
-
-        JsonValue content_length = decoratedJsonValue.asJsonObject().get("content_length");
-
-        Assertions.assertEquals(JsonValue.ValueType.OBJECT, decoratedJsonValue.getValueType());
-        Assertions.assertEquals(JsonValue.ValueType.NUMBER, content_length.getValueType());
-        Assertions.assertEquals(json.asJsonObject().getJsonNumber("content_length").isIntegral(), JsonNumber.class.cast(content_length).isIntegral());
-        Assertions.assertEquals(5, JsonNumber.class.cast(content_length).intValue());
 
         JsonPatch diff = Json.createDiff(json.asJsonObject(), decoratedJsonValue.asJsonObject());
         Assertions.assertEquals(0, diff.toJsonArray().size());
@@ -42,6 +35,7 @@ class DecoratedJsonValueImplTest {
         DecoratedJsonValue decoratedJsonValue = builder
                 .cast("/content_length", JsonDecoratorBuilder.ValueTypeExtended.FLOAT)
                 .cast("/content/age", JsonDecoratorBuilder.ValueTypeExtended.FLOAT)
+                .cast("/content/name", JsonDecoratorBuilder.ValueTypeExtended.ARRAY)
                 .cast("/content/address/zipcode", JsonDecoratorBuilder.ValueTypeExtended.FLOAT)
                 .cast("/content/tel", JsonDecoratorBuilder.ValueTypeExtended.INT)
                 .cast("/content/bag", JsonDecoratorBuilder.ValueTypeExtended.STRING)
@@ -52,12 +46,12 @@ class DecoratedJsonValueImplTest {
             // Display the diff
             diff.toJsonArray().stream().forEach(d -> System.out.println(String.format("%s=%s", d.asJsonObject().getString("path"), d.toString())));
         }
-        Assertions.assertEquals(47, diff.toJsonArray().size());
 
         Map<String, JsonValue> diffMap = diff.toJsonArray().stream().collect(Collectors.toMap(j -> j.asJsonObject().getString("path").toString(), j -> j));
 
         Properties prop = TestUtil.loadProperties("/diff/forceTypes.properties");
         prop.forEach((k, v) -> Assertions.assertEquals(v, diffMap.get(k).toString()));
+        Assertions.assertEquals(prop.size(), diff.toJsonArray().size());
 
     }
 
