@@ -6,7 +6,9 @@ import org.talend.components.jsondecorator.api.DecoratedJsonValue;
 import org.talend.components.jsondecorator.api.JsonDecoratorBuilder;
 
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonNumber;
+import javax.json.JsonObject;
 import javax.json.JsonPatch;
 import javax.json.JsonValue;
 import java.io.IOException;
@@ -25,6 +27,11 @@ class DecoratedJsonValueImplTest {
 
         JsonPatch diff = Json.createDiff(json.asJsonObject(), decoratedJsonValue.asJsonObject());
         Assertions.assertEquals(0, diff.toJsonArray().size());
+
+        JsonNumber content_length_value = decoratedJsonValue.asJsonObject().getJsonNumber("content_length");
+        JsonValue.ValueType content_length_type = content_length_value.getValueType();
+        Assertions.assertEquals(JsonValue.ValueType.NUMBER, content_length_type);
+        Assertions.assertTrue(content_length_value.isIntegral());
     }
 
     @Test
@@ -53,6 +60,18 @@ class DecoratedJsonValueImplTest {
         prop.forEach((k, v) -> Assertions.assertEquals(v, diffMap.get(k).toString()));
         Assertions.assertEquals(prop.size(), diff.toJsonArray().size());
 
+        JsonNumber content_length_value = decoratedJsonValue.asJsonObject().getJsonNumber("content_length");
+        JsonValue.ValueType content_length_type = content_length_value.getValueType();
+        Assertions.assertEquals(JsonValue.ValueType.NUMBER, content_length_type);
+        Assertions.assertFalse(content_length_value.isIntegral());
+
+        JsonArray contentArray = decoratedJsonValue.asJsonObject().getJsonArray("content");
+        contentArray.stream().forEach(e -> {
+            JsonObject element = e.asJsonObject();
+            Assertions.assertEquals(JsonValue.ValueType.STRING, element.get("tel").getValueType());
+        });
+
     }
+
 
 }
