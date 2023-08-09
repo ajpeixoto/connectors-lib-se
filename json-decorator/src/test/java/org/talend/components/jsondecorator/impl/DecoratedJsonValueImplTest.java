@@ -2,6 +2,8 @@ package org.talend.components.jsondecorator.impl;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.talend.components.jsondecorator.api.DecoratedJsonValue;
 import org.talend.components.jsondecorator.api.JsonDecoratorBuilder;
 
@@ -15,6 +17,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 class DecoratedJsonValueImplTest {
 
@@ -23,7 +26,7 @@ class DecoratedJsonValueImplTest {
         JsonValue json = TestUtil.loadJson("/json/geologistsComplex.json");
 
         JsonDecoratorBuilder builder = JsonDecoratorFactoryImpl.getInstance().createBuilder();
-        DecoratedJsonValue decoratedJsonValue = builder.build(json);
+        JsonValue decoratedJsonValue = builder.build(json);
 
         JsonPatch diff = Json.createDiff(json.asJsonObject(), decoratedJsonValue.asJsonObject());
         Assertions.assertEquals(0, diff.toJsonArray().size());
@@ -32,6 +35,12 @@ class DecoratedJsonValueImplTest {
         JsonValue.ValueType content_length_type = content_length_value.getValueType();
         Assertions.assertEquals(JsonValue.ValueType.NUMBER, content_length_type);
         Assertions.assertTrue(content_length_value.isIntegral());
+
+        JsonArray contentArray = decoratedJsonValue.asJsonObject().getJsonArray("content");
+        contentArray.stream().forEach(e -> {
+            JsonObject element = e.asJsonObject();
+            Assertions.assertEquals(JsonValue.ValueType.STRING, element.get("tel").getValueType());
+        });
     }
 
     @Test
@@ -39,7 +48,7 @@ class DecoratedJsonValueImplTest {
         JsonValue json = TestUtil.loadJson("/json/geologistsComplex.json");
 
         JsonDecoratorBuilder builder = JsonDecoratorFactoryImpl.getInstance().createBuilder();
-        DecoratedJsonValue decoratedJsonValue = builder
+        JsonValue decoratedJsonValue = builder
                 .cast("/content_length", JsonDecoratorBuilder.ValueTypeExtended.FLOAT)
                 .cast("/content/age", JsonDecoratorBuilder.ValueTypeExtended.FLOAT)
                 .cast("/content/name", JsonDecoratorBuilder.ValueTypeExtended.ARRAY)
@@ -49,7 +58,7 @@ class DecoratedJsonValueImplTest {
                 .build(json);
 
         JsonPatch diff = Json.createDiff(json.asJsonObject(), decoratedJsonValue.asJsonObject());
-        if(true) {
+        if (true) {
             // Display the diff
             diff.toJsonArray().stream().forEach(d -> System.out.println(String.format("%s=%s", d.asJsonObject().getString("path"), d.toString())));
         }
@@ -68,10 +77,29 @@ class DecoratedJsonValueImplTest {
         JsonArray contentArray = decoratedJsonValue.asJsonObject().getJsonArray("content");
         contentArray.stream().forEach(e -> {
             JsonObject element = e.asJsonObject();
-            Assertions.assertEquals(JsonValue.ValueType.STRING, element.get("tel").getValueType());
+            Assertions.assertEquals(JsonValue.ValueType.NUMBER, element.get("tel").getValueType());
         });
 
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"STRING", "INT", "BOOLEAN"})
+    public void filterByOneType(String filterTypeStr) throws IOException {
+        JsonDecoratorBuilder.ValueTypeExtended valueTypeExtended = JsonDecoratorBuilder.ValueTypeExtended.valueOf(filterTypeStr);
+        JsonValue json = TestUtil.loadJson("/json/geologistsComplex.json");
+
+        JsonDecoratorBuilder builder = JsonDecoratorFactoryImpl.getInstance().createBuilder();
+        JsonValue decoratedJsonValue = builder
+                .filterByType("/content/bag", valueTypeExtended)
+                .build(json);
+
+        JsonArray content = decoratedJsonValue.asJsonObject().getJsonArray("content");
+        for(JsonObject obj : content.getValuesAs(JsonObject.class)) {
+            JsonArray bag = obj.getJsonArray("bag");
+            bag.stream().forEach(v -> Assertions.assertTrue(valueTypeExtended.accept(v)));
+            Assertions.assertEquals(3, bag.size());
+        }
+
+    }
 
 }

@@ -1,14 +1,12 @@
 package org.talend.components.jsondecorator.impl;
 
-import lombok.Data;
 import lombok.NonNull;
 import org.talend.components.jsondecorator.api.DecoratedJsonValue;
 import org.talend.components.jsondecorator.api.JsonDecoratorBuilder;
 
 import javax.json.JsonValue;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JsonDecoratorBuilderImpl implements JsonDecoratorBuilder {
 
@@ -23,7 +21,10 @@ public class JsonDecoratorBuilderImpl implements JsonDecoratorBuilder {
 
     @Override
     public JsonDecoratorBuilder filterByType(@NonNull String path, @NonNull ValueTypeExtended type) {
-        this.decorator.getFilterByTypeMap().put(path, new FilterByType(path, type));
+        FilterByTypes filterByTypes = this.decorator.getFilterByTypeMap().computeIfAbsent(path, k -> new FilterByTypes(k));
+        if(!filterByTypes.getTypes().contains(type)){
+            filterByTypes.getTypes().add(type);
+        }
         return this;
     }
 

@@ -3,6 +3,7 @@ package org.talend.components.jsondecorator.impl;
 import org.talend.components.jsondecorator.api.JsonDecoratorBuilder;
 import org.talend.components.jsondecorator.api.cast.JsonDecoratorCastException;
 
+import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
@@ -12,6 +13,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 class DecoratedJsonArray extends DecoratedJsonValueImpl implements JsonArray {
 
@@ -19,17 +23,36 @@ class DecoratedJsonArray extends DecoratedJsonValueImpl implements JsonArray {
 
     DecoratedJsonArray(JsonValue delegate, JsonDecoratorBuilder.JsonDecorator decorator, String path, JsonValue parent) {
         super(delegate, decorator, path, parent);
-        this.delegateAsJsonArray = JsonArray.class.cast(super.getDelegate());
+        //this.delegateAsJsonArray = JsonArray.class.cast(super.getDelegate());
+
+        Optional<JsonDecoratorBuilder.FilterByTypes> optionalFilterByType = this.getDecorator().getFilterByType(this.getPath());
+
+        Stream<JsonValue> stream = JsonArray.class.cast(super.getDelegate()).stream();
+
+        if(optionalFilterByType.isPresent()){
+            stream = stream.filter(e -> optionalFilterByType.get().getTypes().stream().map(f -> f.accept(e)).reduce(false, (a, b) -> a || b));
+        }
+
+        List<JsonValue> values = stream.map(v -> {
+            try {
+                return this.getDecorator().cast(this.getPath(), v);
+            } catch (JsonDecoratorCastException e) {
+                throw new RuntimeException(e);
+            }
+        }).collect(Collectors.toList());
+
+        this.delegateAsJsonArray = Json.createArrayBuilder(values).build();
+
     }
 
     @Override
     public JsonObject getJsonObject(int i) {
-        return new DecoratedJsonObject(this.delegateAsJsonArray.getJsonObject(i), this.getDecorator(), this.buildPath("x"), this);
+        return new DecoratedJsonObject(this.delegateAsJsonArray.getJsonObject(i), this.getDecorator(), this.getPath(), this);
     }
 
     @Override
     public JsonArray getJsonArray(int i) {
-        return new DecoratedJsonArray(this.delegateAsJsonArray.getJsonArray(i), this.getDecorator(), this.buildPath("y"), this);
+        return new DecoratedJsonArray(this.delegateAsJsonArray.getJsonArray(i), this.getDecorator(), this.getPath(), this);
     }
 
     @Override
@@ -44,6 +67,12 @@ class DecoratedJsonArray extends DecoratedJsonValueImpl implements JsonArray {
 
     @Override
     public <T extends JsonValue> List<T> getValuesAs(Class<T> aClass) {
+        if(JsonObject.class.equals(aClass)){
+            List<T> values = this.delegateAsJsonArray.getValuesAs(aClass);
+            List<JsonValue> decoratedList = values.stream()
+                    .map(v -> new DecoratedJsonObject(v, this.getDecorator(), this.getPath(), this)).collect(Collectors.toList());
+            return (List<T>) decoratedList;
+        }
         return this.delegateAsJsonArray.getValuesAs(aClass);
     }
 
@@ -208,5 +237,18 @@ class DecoratedJsonArray extends DecoratedJsonValueImpl implements JsonArray {
     @Override
     public List<JsonValue> subList(int fromIndex, int toIndex) {
         return this.delegateAsJsonArray.subList(fromIndex, toIndex);
+    }
+
+    @Override
+    public Stream stream() {
+        return this.delegateAsJsonArray.stream().map(e -> {
+            ValueType valueType = e.getValueType();
+            if(valueType == ValueType.ARRAY){
+                return new DecoratedJsonArray(e, this.getDecorator(), this.getPath(), this);
+            } else if (valueType == ValueType.OBJECT) {
+                return new DecoratedJsonObject(e, this.getDecorator(), this.getPath(), this);
+            }
+            return e;
+        });
     }
 }

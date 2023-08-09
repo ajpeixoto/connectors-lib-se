@@ -5,7 +5,6 @@ import org.talend.components.jsondecorator.api.JsonDecoratorBuilder;
 import org.talend.components.jsondecorator.api.cast.CastFactory;
 import org.talend.components.jsondecorator.api.cast.JsonDecoratorCastException;
 
-import javax.json.JsonNumber;
 import javax.json.JsonValue;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +14,7 @@ import java.util.Optional;
 class Decorator implements JsonDecoratorBuilder.JsonDecorator {
     private Map<String, JsonDecoratorBuilder.CastAttribute> castAttributeMap = new HashMap();
 
-    private Map<String, JsonDecoratorBuilder.FilterByType> filterByTypeMap = new HashMap();
+    private Map<String, JsonDecoratorBuilder.FilterByTypes> filterByTypeMap = new HashMap();
 
     @Override
     public Optional<JsonDecoratorBuilder.CastAttribute> getCast(String path) {
@@ -23,7 +22,7 @@ class Decorator implements JsonDecoratorBuilder.JsonDecorator {
     }
 
     @Override
-    public Optional<JsonDecoratorBuilder.FilterByType> getFilterByType(String path) {
+    public Optional<JsonDecoratorBuilder.FilterByTypes> getFilterByType(String path) {
         return Optional.ofNullable(this.filterByTypeMap.get(path));
     }
 

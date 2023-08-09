@@ -4,11 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.talend.components.jsondecorator.api.cast.JsonDecoratorCastException;
 
-import javax.json.JsonObject;
+import javax.json.JsonNumber;
 import javax.json.JsonValue;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 public interface JsonDecoratorBuilder {
 
@@ -44,22 +46,34 @@ public interface JsonDecoratorBuilder {
     DecoratedJsonValue build(JsonValue json);
 
     enum ValueTypeExtended {
-        ARRAY,
-        OBJECT,
-        STRING,
-        FLOAT,
-        INT,
-        BOOLEAN,
+        ARRAY(v -> v.getValueType() == JsonValue.ValueType.ARRAY),
+        OBJECT(v -> v.getValueType() == JsonValue.ValueType.OBJECT),
+        STRING(v -> v.getValueType() == JsonValue.ValueType.STRING),
+        FLOAT(v -> v.getValueType() == JsonValue.ValueType.NUMBER && !((JsonNumber)v).isIntegral()),
+        INT(v -> v.getValueType() == JsonValue.ValueType.NUMBER && ((JsonNumber)v).isIntegral()),
+        BOOLEAN(v -> v.getValueType() == JsonValue.ValueType.TRUE || v.getValueType() == JsonValue.ValueType.FALSE);
+
+        Function<JsonValue, Boolean> accept;
+
+        ValueTypeExtended(Function<JsonValue, Boolean> accept){
+            this.accept = accept;
+        }
+
+        public boolean accept(JsonValue v){
+            return this.accept.apply(v);
+        }
+
+
     }
 
     interface JsonDecorator {
         Map<String, CastAttribute> getCastAttributeMap();
 
-        Map<String, FilterByType> getFilterByTypeMap();
+        Map<String, FilterByTypes> getFilterByTypeMap();
 
         Optional<CastAttribute> getCast(String path);
 
-        Optional<FilterByType> getFilterByType(String path);
+        Optional<FilterByTypes> getFilterByType(String path);
 
         JsonValue cast(String path, JsonValue delegatedValue) throws JsonDecoratorCastException;
 
@@ -74,8 +88,14 @@ public interface JsonDecoratorBuilder {
 
     @Data
     @AllArgsConstructor
-    class FilterByType {
+    class FilterByTypes {
+
+        public FilterByTypes(String path){
+            this.path = path;
+            this.types = new ArrayList<>();
+        }
+
         private final String path;
-        private final ValueTypeExtended type;
+        private final List<ValueTypeExtended> types;
     }
 }
