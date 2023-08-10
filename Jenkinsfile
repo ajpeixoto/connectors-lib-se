@@ -51,15 +51,22 @@ spec:
             command: [cat]
             tty: true
             volumeMounts: [
-                {name: docker, mountPath: /var/run/docker.sock}, 
                 {name: m2main, mountPath: /root/.m2/repository}, 
                 {name: dockercache, mountPath: /root/.dockercache}
             ]
             resources: {requests: {memory: 3G, cpu: '2.5'}, limits: {memory: 3G, cpu: '2.5'}}
+            env:
+                - name: DOCKER_HOST
+                  value: tcp://localhost:2375
+        - 
+            name: docker-daemon
+            image: artifactory.datapwn.com/docker-io-remote/docker:23.0.6-dind
+            env:
+                - name: DOCKER_TLS_CERTDIR
+                  value: ""
+            securityContext:
+                privileged: true   
     volumes:
-        -
-            name: docker
-            hostPath: {path: /var/run/docker.sock}
         -
             name: m2main
             hostPath: {path: ${m2} }
