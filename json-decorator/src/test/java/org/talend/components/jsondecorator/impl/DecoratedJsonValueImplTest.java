@@ -3,6 +3,7 @@ package org.talend.components.jsondecorator.impl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.talend.components.jsondecorator.api.DecoratedJsonValue;
 import org.talend.components.jsondecorator.api.JsonDecoratorBuilder;
@@ -11,11 +12,15 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.json.JsonPatch;
 import javax.json.JsonValue;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -84,7 +89,7 @@ class DecoratedJsonValueImplTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"STRING", "INT", "BOOLEAN"})
-    public void filterByOneType(String filterTypeStr) throws IOException {
+    public void filterArrayByOneType(String filterTypeStr) throws IOException {
         JsonDecoratorBuilder.ValueTypeExtended valueTypeExtended = JsonDecoratorBuilder.ValueTypeExtended.valueOf(filterTypeStr);
         JsonValue json = TestUtil.loadJson("/json/geologistsComplex.json");
 
@@ -94,10 +99,55 @@ class DecoratedJsonValueImplTest {
                 .build(json);
 
         JsonArray content = decoratedJsonValue.asJsonObject().getJsonArray("content");
-        for(JsonObject obj : content.getValuesAs(JsonObject.class)) {
+        for (JsonObject obj : content.getValuesAs(JsonObject.class)) {
             JsonArray bag = obj.getJsonArray("bag");
             bag.stream().forEach(v -> Assertions.assertTrue(valueTypeExtended.accept(v)));
             Assertions.assertEquals(3, bag.size());
+        }
+
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "STRING,INT",
+            "STRING,BOOLEAN",
+            "BOOLEAN,INT",
+            "BOOLEAN,INT,STRING"
+    })
+    public void filterArraySeveralTypes(String filterTypesStr) throws IOException {
+        JsonValue json = TestUtil.loadJson("/json/geologistsComplex.json");
+
+        JsonDecoratorBuilder builder = JsonDecoratorFactoryImpl.getInstance().createBuilder();
+        List<JsonDecoratorBuilder.ValueTypeExtended> types = Arrays.stream(filterTypesStr.split(","))
+                .map(s -> s.trim())
+                .map(s -> JsonDecoratorBuilder.ValueTypeExtended.valueOf(s))
+                .collect(Collectors.toList());
+
+        types.stream()
+                .forEach(t ->
+                        builder.filterByType("/content/bag", t));
+
+        JsonValue decoratedJsonValue = builder.build(json);
+
+        JsonArray content = decoratedJsonValue.asJsonObject().getJsonArray("content");
+        for (JsonObject obj : content.getValuesAs(JsonObject.class)) {
+            JsonArray bag = obj.getJsonArray("bag");
+            Map<JsonValue.ValueType, Long> collect = bag.stream().collect(Collectors.groupingBy(JsonValue::getValueType, Collectors.counting()));
+            for (JsonDecoratorBuilder.ValueTypeExtended t : types) {
+                switch (t) {
+                    case STRING:
+                        Assertions.assertEquals(3, collect.get(JsonValue.ValueType.STRING));
+                        break;
+                    case INT:
+                        Assertions.assertEquals(3, collect.get(JsonValue.ValueType.NUMBER));
+                        break;
+                    case BOOLEAN:
+                        Long boolCount = collect.getOrDefault(JsonValue.ValueType.TRUE, 0L)
+                                + collect.getOrDefault(JsonValue.ValueType.FALSE, 0L);
+                        Assertions.assertEquals(3, boolCount);
+                        break;
+                }
+            }
         }
 
     }
