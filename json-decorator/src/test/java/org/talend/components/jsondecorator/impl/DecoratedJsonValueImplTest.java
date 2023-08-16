@@ -87,6 +87,22 @@ class DecoratedJsonValueImplTest {
 
     }
 
+    @Test
+    public void forceTypesToNullValue() throws IOException {
+        JsonValue json = TestUtil.loadJson("/json/simple.json");
+
+        JsonDecoratorBuilder builder = JsonDecoratorFactoryImpl.getInstance().createBuilder();
+        JsonObject decoratedJsonValue = builder
+                .cast("/address1", JsonDecoratorBuilder.ValueTypeExtended.OBJECT, "{\"name\": \"peter\"}")
+                .build(json).asJsonObject();
+
+        Assertions.assertEquals(JsonValue.ValueType.STRING, decoratedJsonValue.get("name").getValueType());
+        JsonValue address1 = decoratedJsonValue.get("address1");
+        Assertions.assertEquals(JsonValue.ValueType.OBJECT, address1.getValueType());
+        Assertions.assertEquals("peter", address1.asJsonObject().getString("name"));
+
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"STRING", "INT", "BOOLEAN"})
     public void filterArrayByOneType(String filterTypeStr) throws IOException {
@@ -152,4 +168,9 @@ class DecoratedJsonValueImplTest {
 
     }
 
+    @Test
+    public void arrayOfArrayCast(){}
+
+    @Test
+    public void arrayOfArrayFilter(){}
 }

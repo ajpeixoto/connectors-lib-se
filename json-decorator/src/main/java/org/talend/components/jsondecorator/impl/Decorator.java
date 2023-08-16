@@ -5,6 +5,8 @@ import org.talend.components.jsondecorator.api.JsonDecoratorBuilder;
 import org.talend.components.jsondecorator.api.cast.CastFactory;
 import org.talend.components.jsondecorator.api.cast.JsonDecoratorCastException;
 
+import javax.json.Json;
+import javax.json.JsonObject;
 import javax.json.JsonValue;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,11 +32,16 @@ class Decorator implements JsonDecoratorBuilder.JsonDecorator {
     public JsonValue cast(String path, JsonValue delegatedValue) throws JsonDecoratorCastException {
         Optional<JsonDecoratorBuilder.CastAttribute> optCast = this.getCast(path);
 
-        if(optCast.isEmpty()) {
+        if (optCast.isEmpty()) {
             return delegatedValue;
         }
 
-        JsonValue cast = CastFactory.getInstance().cast(delegatedValue, optCast.get());
+        JsonDecoratorBuilder.CastAttribute castAttribute = optCast.get();
+        if (delegatedValue == JsonValue.NULL && castAttribute.getForceNullValue() != null) {
+            delegatedValue = Json.createValue(castAttribute.getForceNullValue());
+        }
+        JsonValue cast = CastFactory.getInstance().cast(delegatedValue, castAttribute);
+
 
         return cast;
     }

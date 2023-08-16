@@ -7,8 +7,11 @@ import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
+import javax.json.JsonReader;
 import javax.json.JsonString;
 import javax.json.JsonValue;
+import javax.json.stream.JsonParsingException;
+import java.io.StringReader;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -23,6 +26,19 @@ public class CastString implements Cast<JsonString> {
 
     @Override
     public JsonObject toObject(JsonString value) throws JsonDecoratorCastException {
+        String content = value.getString();
+        String trimed = content.trim();
+        if(trimed.charAt(0) == '{' && trimed.charAt(trimed.length() - 1) == '}'){
+            // It is maybe a json document
+            // Try to create a JsonObject if it starts en ends by { }
+            try(JsonReader reader = Json.createReader(new StringReader(trimed))) {
+                JsonObject jsonObject = reader.readObject();
+                return jsonObject;
+            }
+            catch (JsonParsingException e){
+                // Do nothing
+            }
+        }
         JsonObject object = Json.createObjectBuilder().add(DEFAULT_NAME, value).build();
         return object;
     }

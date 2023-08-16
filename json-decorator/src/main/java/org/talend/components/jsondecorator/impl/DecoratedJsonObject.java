@@ -10,6 +10,7 @@ import javax.json.JsonString;
 import javax.json.JsonValue;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 class DecoratedJsonObject extends DecoratedJsonValueImpl implements JsonObject {
@@ -115,13 +116,20 @@ class DecoratedJsonObject extends DecoratedJsonValueImpl implements JsonObject {
     public JsonValue get(Object key) {
         try {
             JsonValue delegatedValue = this.delegateAsJsonObject.get(key);
+            String childPath = this.buildPath(String.class.cast(key));
+            Optional<JsonDecoratorBuilder.CastAttribute> childCast = this.getDecorator().getCast(childPath);
+
             if(delegatedValue.getValueType() == ValueType.OBJECT){
-                delegatedValue = new DecoratedJsonObject(delegatedValue, this.getDecorator(), this.buildPath(String.class.cast(key)), this);
+                delegatedValue = new DecoratedJsonObject(delegatedValue, this.getDecorator(), childPath, this);
             }
             else if(delegatedValue.getValueType() == ValueType.ARRAY){
-                delegatedValue = new DecoratedJsonArray(delegatedValue, this.getDecorator(), this.buildPath(String.class.cast(key)), this);
+                delegatedValue = new DecoratedJsonArray(delegatedValue, this.getDecorator(), childPath, this);
             }
-            JsonValue cast = this.getDecorator().cast(this.buildPath(String.class.cast(key)), delegatedValue);
+            JsonValue cast = this.getDecorator().cast(childPath, delegatedValue);
+
+            if(childCast.isPresent() && childCast.get().getType() == JsonDecoratorBuilder.ValueTypeExtended.OBJECT){
+                cast = new DecoratedJsonObject(cast, this.getDecorator(), childPath, this);
+            }
             return cast;
         }
         catch (JsonDecoratorCastException e){

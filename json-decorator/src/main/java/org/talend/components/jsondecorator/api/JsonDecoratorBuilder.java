@@ -26,6 +26,18 @@ public interface JsonDecoratorBuilder {
     JsonDecoratorBuilder cast(String path, ValueTypeExtended type);
 
     /**
+     * Force, and try to cast, values to the desired type.
+     * If the path references an object attribute, it will change its type and cast the value.
+     * If the path references an array, it will try to force the type and cast all elements of the array.
+     *
+     * @param path              The path of the attribute.
+     * @param type              The type to cast.
+     * @param forceNullValue    If the value to cast is null, replace it with the given value casted to the desired type.
+     * @return The builder.
+     */
+    JsonDecoratorBuilder cast(String path, ValueTypeExtended type, String forceNullValue);
+
+    /**
      * Keep only values of the selected type.
      * On an object, it keeps only attributes of the selected type (after cast).
      * On an array, it keeps only values of the desired type.
@@ -84,6 +96,7 @@ public interface JsonDecoratorBuilder {
     class CastAttribute {
         private final String path;
         private final ValueTypeExtended type;
+        private final String forceNullValue;
     }
 
     @Data

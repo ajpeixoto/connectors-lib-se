@@ -29,6 +29,9 @@ public class CastFactory {
         JsonValue.ValueType valueType = v.getValueType();
         Cast cast = null;
         switch (valueType) {
+            case NULL:
+                //cast = castByType.computeIfAbsent(valueType, k -> new CastNull());
+                return v;
             case NUMBER:
                 cast = castByType.computeIfAbsent(valueType, k -> new CastNumber());
                 break;

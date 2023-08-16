@@ -5,17 +5,19 @@ import org.talend.components.jsondecorator.api.DecoratedJsonValue;
 import org.talend.components.jsondecorator.api.JsonDecoratorBuilder;
 
 import javax.json.JsonValue;
-import java.util.ArrayList;
-import java.util.List;
 
 public class JsonDecoratorBuilderImpl implements JsonDecoratorBuilder {
 
     private final Decorator decorator = new Decorator();
 
-
     @Override
     public JsonDecoratorBuilder cast(@NonNull String path, @NonNull ValueTypeExtended type) {
-        this.decorator.getCastAttributeMap().put(path, new CastAttribute(path, type));
+        return this.cast(path, type, null);
+    }
+
+    @Override
+    public JsonDecoratorBuilder cast(@NonNull String path, @NonNull ValueTypeExtended type, String forceNullValue) {
+        this.decorator.getCastAttributeMap().put(path, new CastAttribute(path, type, forceNullValue));
         return this;
     }
 
