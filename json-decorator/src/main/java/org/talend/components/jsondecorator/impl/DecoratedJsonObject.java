@@ -35,19 +35,6 @@ class DecoratedJsonObject extends DecoratedJsonValueImpl implements JsonObject {
 
     @Override
     public JsonNumber getJsonNumber(String s) {
-        /* String p = this.buildPath(s);
-        JsonValue value = this.delegateAsJsonObject.get(s);
-
-        Optional<JsonDecoratorBuilder.CastAttribute> optCast = this.getDecorator().getCast(this.buildPath(s));
-
-        if (optCast.isPresent()) {
-            JsonDecoratorBuilder.CastAttribute cast = optCast.get();
-            CastFactory.getInstance().
-        }
-
-        return JsonNumber.class.cast(value);
-        ;*/
-
         JsonValue jsonValue = this.get(s);
         return  JsonNumber.class.cast(jsonValue);
     }
