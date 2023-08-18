@@ -52,7 +52,7 @@ class DecoratedJsonArray extends DecoratedJsonValueImpl implements JsonArray {
 
     @Override
     public JsonArray getJsonArray(int i) {
-        return new DecoratedJsonArray(this.delegateAsJsonArray.getJsonArray(i), this.getDecorator(), this.getPath(), this);
+        return new DecoratedJsonArray(this.delegateAsJsonArray.getJsonArray(i), this.getDecorator(), this.buildPath("*"), this);
     }
 
     @Override

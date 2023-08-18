@@ -131,7 +131,7 @@ class DecoratedJsonValueImplTest {
             "BOOLEAN,INT,STRING"
     })
     public void filterArraySeveralTypes(String filterTypesStr) throws IOException {
-        JsonValue json = TestUtil.loadJson("/json/geologistsComplex.json");
+            JsonValue json = TestUtil.loadJson("/json/geologistsComplex.json");
 
         JsonDecoratorBuilder builder = JsonDecoratorFactoryImpl.getInstance().createBuilder();
         List<JsonDecoratorBuilder.ValueTypeExtended> types = Arrays.stream(filterTypesStr.split(","))
@@ -169,7 +169,29 @@ class DecoratedJsonValueImplTest {
     }
 
     @Test
-    public void arrayOfArrayCast(){}
+    public void arrayOfArrayCast(){
+        JsonValue json = TestUtil.loadJson("/json/arrayOfArrays.json");
+
+        JsonDecoratorBuilder builder = JsonDecoratorFactoryImpl.getInstance().createBuilder();
+        JsonValue decoratedJsonValue = builder
+                .cast("/second_array/*", JsonDecoratorBuilder.ValueTypeExtended.STRING)
+                .cast("/fourth_array/*/*", JsonDecoratorBuilder.ValueTypeExtended.STRING)
+                .build(json);
+
+        JsonPatch diff = Json.createDiff(json.asJsonObject(), decoratedJsonValue.asJsonObject());
+
+        JsonValue jsonValue = decoratedJsonValue.asJsonObject().getJsonArray("first_array").getJsonArray(0).get(0);
+        Assertions.assertEquals(JsonValue.ValueType.NUMBER, jsonValue.getValueType());
+
+        jsonValue = decoratedJsonValue.asJsonObject().getJsonArray("second_array").getJsonArray(0).get(0);
+        Assertions.assertEquals(JsonValue.ValueType.STRING, jsonValue.getValueType());
+
+        jsonValue = decoratedJsonValue.asJsonObject().getJsonArray("third_array").getJsonArray(0).getJsonArray(0).get(0);
+        Assertions.assertEquals(JsonValue.ValueType.NUMBER, jsonValue.getValueType());
+
+        jsonValue = decoratedJsonValue.asJsonObject().getJsonArray("fourth_array").getJsonArray(0).getJsonArray(0).get(0);
+        Assertions.assertEquals(JsonValue.ValueType.STRING, jsonValue.getValueType());
+    }
 
     @Test
     public void arrayOfArrayFilter(){}
