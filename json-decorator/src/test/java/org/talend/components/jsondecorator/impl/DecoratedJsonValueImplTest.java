@@ -14,8 +14,10 @@ import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonPatch;
+import javax.json.JsonString;
 import javax.json.JsonValue;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -183,8 +185,14 @@ class DecoratedJsonValueImplTest {
         JsonValue jsonValue = decoratedJsonValue.asJsonObject().getJsonArray("first_array").getJsonArray(0).get(0);
         Assertions.assertEquals(JsonValue.ValueType.NUMBER, jsonValue.getValueType());
 
-        jsonValue = decoratedJsonValue.asJsonObject().getJsonArray("second_array").getJsonArray(0).get(0);
-        Assertions.assertEquals(JsonValue.ValueType.STRING, jsonValue.getValueType());
+        List<String> expected = new ArrayList<>(Arrays.asList("1", "2", "one", "two", "three", "3"));
+        decoratedJsonValue.asJsonObject().getJsonArray("second_array").getJsonArray(0)
+                .stream().forEach(e -> {
+                    Assertions.assertEquals(JsonValue.ValueType.STRING, e.getValueType());
+                    String stringValue = JsonString.class.cast(e).getString();
+                    Assertions.assertTrue(expected.remove(stringValue), String.format("'%s' not found in expected values.", stringValue));
+                });
+        Assertions.assertTrue(expected.isEmpty());
 
         jsonValue = decoratedJsonValue.asJsonObject().getJsonArray("third_array").getJsonArray(0).getJsonArray(0).get(0);
         Assertions.assertEquals(JsonValue.ValueType.NUMBER, jsonValue.getValueType());
@@ -193,6 +201,33 @@ class DecoratedJsonValueImplTest {
         Assertions.assertEquals(JsonValue.ValueType.STRING, jsonValue.getValueType());
     }
 
-    @Test
-    public void arrayOfArrayFilter(){}
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "STRING",
+            "INT"
+    })
+    public void arrayOfArrayFilter(JsonDecoratorBuilder.ValueTypeExtended type){
+        JsonValue json = TestUtil.loadJson("/json/arrayOfArrays.json");
+
+        JsonDecoratorBuilder builder = JsonDecoratorFactoryImpl.getInstance().createBuilder();
+        JsonValue decoratedJsonValue = builder
+                .filterByType("/second_array/*", type)
+                .build(json);
+
+        List expected = new ArrayList<>();
+        if(type == JsonDecoratorBuilder.ValueTypeExtended.STRING) {
+            expected.addAll(Arrays.asList("one", "two", "three"));
+        }
+        else {
+            expected.addAll(Arrays.asList(1, 2, 3));
+        }
+        decoratedJsonValue.asJsonObject().getJsonArray("second_array").getJsonArray(0)
+                .stream().forEach(e -> {
+                    JsonValue.ValueType jsonType = type == JsonDecoratorBuilder.ValueTypeExtended.STRING ? JsonValue.ValueType.STRING : JsonValue.ValueType.NUMBER;
+                    Assertions.assertEquals(jsonType, e.getValueType());
+                    Object stringValue = type == JsonDecoratorBuilder.ValueTypeExtended.STRING ? JsonString.class.cast(e).getString() : JsonNumber.class.cast(e).intValue();
+                    Assertions.assertTrue(expected.remove(stringValue), String.format("'%s' not found in expected values.", stringValue));
+                });
+        Assertions.assertTrue(expected.isEmpty());
+    }
 }
