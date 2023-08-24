@@ -7,6 +7,7 @@ import org.talend.components.jsondecorator.api.cast.JsonDecoratorCastException;
 import javax.json.JsonNumber;
 import javax.json.JsonValue;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -48,14 +49,18 @@ public interface JsonDecoratorBuilder {
      */
     JsonDecoratorBuilder filterByType(String path, ValueTypeExtended type);
 
+    JsonDecoratorBuilder addDecorator(JsonDecorator decorator);
+
+    JsonValue build(JsonValue json);
 
     /**
      * Decorate the given jsonValue with the configured decorator.
      *
      * @param json The jsonValue to decorate.
+     * @param rootPath The root path of the object, / by default.
      * @return An implementation of decorated JsonValue
      */
-    DecoratedJsonValue build(JsonValue json);
+    JsonValue build(String rootPath, JsonValue json);
 
     enum ValueTypeExtended {
         ARRAY(v -> v.getValueType() == JsonValue.ValueType.ARRAY),

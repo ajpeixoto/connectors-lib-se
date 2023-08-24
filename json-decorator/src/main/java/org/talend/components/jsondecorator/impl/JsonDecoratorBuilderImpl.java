@@ -1,7 +1,6 @@
 package org.talend.components.jsondecorator.impl;
 
 import lombok.NonNull;
-import org.talend.components.jsondecorator.api.DecoratedJsonValue;
 import org.talend.components.jsondecorator.api.JsonDecoratorBuilder;
 
 import javax.json.JsonValue;
@@ -31,8 +30,22 @@ public class JsonDecoratorBuilderImpl implements JsonDecoratorBuilder {
     }
 
     @Override
-    public DecoratedJsonValue build(JsonValue json) {
-        return new DecoratedJsonValueImpl(json, decorator, null, null);
+    public JsonDecoratorBuilder addDecorator(JsonDecorator decorator) {
+        decorator.getCastAttributeMap().entrySet().stream().forEach(e -> this.decorator.getCastAttributeMap().put(e.getKey(), e.getValue()));
+        decorator.getFilterByTypeMap().entrySet().stream().forEach(e -> this.decorator.getFilterByTypeMap().put(e.getKey(), e.getValue()));
+        return this;
+    }
+
+    @Override
+    public JsonValue build(JsonValue json) {
+        return build(null, json);
+    }
+
+    public JsonValue build(String rootPath, JsonValue json) {
+        if(this.decorator.getCastAttributeMap().isEmpty() && this.decorator.getFilterByTypeMap().isEmpty()){
+            return json;
+        }
+        return new DecoratedJsonValueImpl(json, decorator, rootPath, null);
     }
 
 }

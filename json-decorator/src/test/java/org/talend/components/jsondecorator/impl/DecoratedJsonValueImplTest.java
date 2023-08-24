@@ -21,7 +21,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -133,7 +135,7 @@ class DecoratedJsonValueImplTest {
             "BOOLEAN,INT,STRING"
     })
     public void filterArraySeveralTypes(String filterTypesStr) throws IOException {
-            JsonValue json = TestUtil.loadJson("/json/geologistsComplex.json");
+        JsonValue json = TestUtil.loadJson("/json/geologistsComplex.json");
 
         JsonDecoratorBuilder builder = JsonDecoratorFactoryImpl.getInstance().createBuilder();
         List<JsonDecoratorBuilder.ValueTypeExtended> types = Arrays.stream(filterTypesStr.split(","))
@@ -171,7 +173,7 @@ class DecoratedJsonValueImplTest {
     }
 
     @Test
-    public void arrayOfArrayCast(){
+    public void arrayOfArrayCast() {
         JsonValue json = TestUtil.loadJson("/json/arrayOfArrays.json");
 
         JsonDecoratorBuilder builder = JsonDecoratorFactoryImpl.getInstance().createBuilder();
@@ -206,7 +208,7 @@ class DecoratedJsonValueImplTest {
             "STRING",
             "INT"
     })
-    public void arrayOfArrayFilter(JsonDecoratorBuilder.ValueTypeExtended type){
+    public void arrayOfArrayFilter(JsonDecoratorBuilder.ValueTypeExtended type) {
         JsonValue json = TestUtil.loadJson("/json/arrayOfArrays.json");
 
         JsonDecoratorBuilder builder = JsonDecoratorFactoryImpl.getInstance().createBuilder();
@@ -215,10 +217,9 @@ class DecoratedJsonValueImplTest {
                 .build(json);
 
         List expected = new ArrayList<>();
-        if(type == JsonDecoratorBuilder.ValueTypeExtended.STRING) {
+        if (type == JsonDecoratorBuilder.ValueTypeExtended.STRING) {
             expected.addAll(Arrays.asList("one", "two", "three"));
-        }
-        else {
+        } else {
             expected.addAll(Arrays.asList(1, 2, 3));
         }
         decoratedJsonValue.asJsonObject().getJsonArray("second_array").getJsonArray(0)
@@ -229,5 +230,33 @@ class DecoratedJsonValueImplTest {
                     Assertions.assertTrue(expected.remove(stringValue), String.format("'%s' not found in expected values.", stringValue));
                 });
         Assertions.assertTrue(expected.isEmpty());
+    }
+
+    @Test
+    public void ObjectEntrySet() {
+        JsonValue json = TestUtil.loadJson("/json/geologistsComplex.json");
+
+        JsonDecoratorBuilder builder = JsonDecoratorFactoryImpl.getInstance().createBuilder()
+                .cast("/content_length", JsonDecoratorBuilder.ValueTypeExtended.STRING)
+                .cast("/content/objects/aaa", JsonDecoratorBuilder.ValueTypeExtended.STRING)
+                .cast("/content/bag", JsonDecoratorBuilder.ValueTypeExtended.STRING);
+        JsonValue decoratedJsonValue = builder.build(json);
+
+        Set<Map.Entry<String, JsonValue>> entries = decoratedJsonValue.asJsonObject().entrySet();
+
+        Optional<Map.Entry<String, JsonValue>> contentLength = entries.stream().filter(e -> "content_length".equals(e.getKey())).findFirst();
+        Assertions.assertTrue(contentLength.isPresent());
+        Assertions.assertEquals(JsonValue.ValueType.STRING, contentLength.get().getValue().getValueType());
+
+        JsonArray content = decoratedJsonValue.asJsonObject().getJsonArray("content");
+        for (JsonObject obj : content.getValuesAs(JsonObject.class)) {
+            JsonArray bag = obj.getJsonArray("bag");
+            bag.stream().forEach(v -> Assertions.assertEquals(JsonValue.ValueType.STRING, v.getValueType()));
+
+            JsonArray objects = obj.getJsonArray("objects");
+            objects.stream().forEach(o -> Assertions.assertEquals(JsonValue.ValueType.STRING, o.asJsonObject().get("aaa").getValueType()));
+        }
+
+
     }
 }
