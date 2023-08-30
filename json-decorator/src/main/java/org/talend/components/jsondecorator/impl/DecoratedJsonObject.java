@@ -10,8 +10,8 @@ import javax.json.JsonString;
 import javax.json.JsonValue;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 class DecoratedJsonObject extends DecoratedJsonValueImpl implements JsonObject {
@@ -26,7 +26,7 @@ class DecoratedJsonObject extends DecoratedJsonValueImpl implements JsonObject {
 
     @Override
     public JsonArray getJsonArray(String s) {
-        return new DecoratedJsonArray(this.delegateAsJsonObject.getJsonArray(s), this.getDecorator(), this.buildPath(s), this);
+        return new DecoratedJsonArray(this.get(s), this.getDecorator(), this.buildPath(s), this);
     }
 
     @Override
@@ -105,7 +105,7 @@ class DecoratedJsonObject extends DecoratedJsonValueImpl implements JsonObject {
         try {
             JsonValue delegatedValue = this.delegateAsJsonObject.get(key);
             String childPath = this.buildPath(String.class.cast(key));
-            Optional<JsonDecoratorBuilder.CastAttribute> childCast = this.getDecorator().getCast(childPath);
+            List<JsonDecoratorBuilder.JsonDecoratorConfiguration> childCast = this.getDecorator().getConfigurations(childPath, JsonDecoratorBuilder.JsonDecoratorAction.CAST);
 
             if (delegatedValue.getValueType() == ValueType.OBJECT) {
                 delegatedValue = new DecoratedJsonObject(delegatedValue, this.getDecorator(), childPath, this);
@@ -114,7 +114,7 @@ class DecoratedJsonObject extends DecoratedJsonValueImpl implements JsonObject {
             }
             JsonValue cast = this.getDecorator().cast(childPath, delegatedValue);
 
-            if (childCast.isPresent() && childCast.get().getType() == JsonDecoratorBuilder.ValueTypeExtended.OBJECT) {
+            if (!childCast.isEmpty() && cast.getValueType() == ValueType.OBJECT) {
                 cast = new DecoratedJsonObject(cast, this.getDecorator(), childPath, this);
             }
             return cast;

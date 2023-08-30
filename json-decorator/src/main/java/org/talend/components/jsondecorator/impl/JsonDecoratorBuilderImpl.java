@@ -16,23 +16,19 @@ public class JsonDecoratorBuilderImpl implements JsonDecoratorBuilder {
 
     @Override
     public JsonDecoratorBuilder cast(@NonNull String path, @NonNull ValueTypeExtended type, String forceNullValue) {
-        this.decorator.getCastAttributeMap().put(path, new CastAttribute(path, type, forceNullValue));
+        this.decorator.addJsonDecoratorConfiguration(new JsonDecoratorConfiguration(path, JsonDecoratorAction.CAST, type, forceNullValue));
         return this;
     }
 
     @Override
     public JsonDecoratorBuilder filterByType(@NonNull String path, @NonNull ValueTypeExtended type) {
-        FilterByTypes filterByTypes = this.decorator.getFilterByTypeMap().computeIfAbsent(path, k -> new FilterByTypes(k));
-        if(!filterByTypes.getTypes().contains(type)){
-            filterByTypes.getTypes().add(type);
-        }
+        this.decorator.addJsonDecoratorConfiguration(new JsonDecoratorConfiguration(path, JsonDecoratorAction.FILTER, type, null));
         return this;
     }
 
     @Override
-    public JsonDecoratorBuilder addDecorator(JsonDecorator decorator) {
-        decorator.getCastAttributeMap().entrySet().stream().forEach(e -> this.decorator.getCastAttributeMap().put(e.getKey(), e.getValue()));
-        decorator.getFilterByTypeMap().entrySet().stream().forEach(e -> this.decorator.getFilterByTypeMap().put(e.getKey(), e.getValue()));
+    public JsonDecoratorBuilder addDecorator(JsonDecorator decoratorParam) {
+        decoratorParam.getAllConfigurations().stream().forEach(e -> this.decorator.addJsonDecoratorConfiguration(e));
         return this;
     }
 
@@ -42,7 +38,7 @@ public class JsonDecoratorBuilderImpl implements JsonDecoratorBuilder {
     }
 
     public JsonValue build(String rootPath, JsonValue json) {
-        if(this.decorator.getCastAttributeMap().isEmpty() && this.decorator.getFilterByTypeMap().isEmpty()){
+        if(this.decorator.getAllConfigurations().isEmpty()){
             return json;
         }
         return new DecoratedJsonValueImpl(json, decorator, rootPath, null);

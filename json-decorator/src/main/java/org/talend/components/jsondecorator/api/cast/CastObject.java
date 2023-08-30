@@ -14,9 +14,8 @@ import java.math.BigInteger;
 public class CastObject implements Cast<JsonObject> {
     @Override
     public JsonArray toArray(JsonObject value) throws JsonDecoratorCastException {
-        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        value.values().stream().forEach(v -> arrayBuilder.add(v));
-        return arrayBuilder.build();
+        JsonArray array = Json.createArrayBuilder().add(value).build();
+        return array;
     }
 
     @Override

@@ -13,8 +13,8 @@ import java.math.BigInteger;
 public class CastNumber implements Cast<JsonNumber> {
     @Override
     public JsonArray toArray(JsonNumber value) throws JsonDecoratorCastException {
-        throw new JsonDecoratorCastException("Can't cast JsonNumber to Array.");
-    }
+        JsonArray array = Json.createArrayBuilder().add(value).build();
+        return array;    }
 
     @Override
     public JsonObject toObject(JsonNumber value) throws JsonDecoratorCastException {

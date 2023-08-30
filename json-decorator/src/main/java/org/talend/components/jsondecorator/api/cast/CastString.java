@@ -19,9 +19,8 @@ import java.util.Arrays;
 public class CastString implements Cast<JsonString> {
     @Override
     public JsonArray toArray(JsonString value) throws JsonDecoratorCastException {
-        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        value.getString().codePoints().forEach(c -> arrayBuilder.add(new String(Character.toChars(c))));
-        return arrayBuilder.build();
+        JsonArray array = Json.createArrayBuilder().add(value).build();
+        return array;
     }
 
     @Override

@@ -13,7 +13,8 @@ import java.math.BigInteger;
 public class CastBoolean implements Cast<JsonValue> {
     @Override
     public JsonArray toArray(JsonValue value) throws JsonDecoratorCastException {
-        throw new JsonDecoratorCastException("Can't cast Boolean to Array.");
+        JsonArray array = Json.createArrayBuilder().add(value).build();
+        return array;
     }
 
     @Override

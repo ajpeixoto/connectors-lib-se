@@ -6,42 +6,48 @@ import org.talend.components.jsondecorator.api.cast.CastFactory;
 import org.talend.components.jsondecorator.api.cast.JsonDecoratorCastException;
 
 import javax.json.Json;
-import javax.json.JsonObject;
 import javax.json.JsonValue;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 class Decorator implements JsonDecoratorBuilder.JsonDecorator {
-    private Map<String, JsonDecoratorBuilder.CastAttribute> castAttributeMap = new HashMap();
+    private List<JsonDecoratorBuilder.JsonDecoratorConfiguration> jsonDecoratorConfigurationList = new ArrayList<>();
 
-    private Map<String, JsonDecoratorBuilder.FilterByTypes> filterByTypeMap = new HashMap();
+    void addJsonDecoratorConfiguration(JsonDecoratorBuilder.JsonDecoratorConfiguration jsonDecoratorConfiguration) {
+        this.jsonDecoratorConfigurationList.add(jsonDecoratorConfiguration);
+    }
+
 
     @Override
-    public Optional<JsonDecoratorBuilder.CastAttribute> getCast(String path) {
-        return Optional.ofNullable(this.castAttributeMap.get(path));
+    public List<JsonDecoratorBuilder.JsonDecoratorConfiguration> getConfigurations(String path, JsonDecoratorBuilder.JsonDecoratorAction action) {
+        return this.jsonDecoratorConfigurationList.stream().filter(c -> c.getPath().equals(path) && c.getAction() == action).collect(Collectors.toList());
     }
 
     @Override
-    public Optional<JsonDecoratorBuilder.FilterByTypes> getFilterByType(String path) {
-        return Optional.ofNullable(this.filterByTypeMap.get(path));
+    public List<JsonDecoratorBuilder.JsonDecoratorConfiguration> getAllConfigurations() {
+        return Collections.unmodifiableList(this.jsonDecoratorConfigurationList);
     }
 
     @Override
     public JsonValue cast(String path, JsonValue delegatedValue) throws JsonDecoratorCastException {
-        Optional<JsonDecoratorBuilder.CastAttribute> optCast = this.getCast(path);
+        List<JsonDecoratorBuilder.JsonDecoratorConfiguration> castConfigList = this.getConfigurations(path,
+                JsonDecoratorBuilder.JsonDecoratorAction.CAST);
 
-        if (optCast.isEmpty()) {
+        if (castConfigList.isEmpty()) {
             return delegatedValue;
         }
 
-        JsonDecoratorBuilder.CastAttribute castAttribute = optCast.get();
-        if (delegatedValue == JsonValue.NULL && castAttribute.getForceNullValue() != null) {
-            delegatedValue = Json.createValue(castAttribute.getForceNullValue());
+        JsonValue cast = null;
+        for (JsonDecoratorBuilder.JsonDecoratorConfiguration castAttribute : castConfigList) {
+            if (delegatedValue == JsonValue.NULL && castAttribute.getForceNullValue() != null) {
+                delegatedValue = Json.createValue(castAttribute.getForceNullValue());
+            }
+            cast = CastFactory.getInstance().cast(delegatedValue, castAttribute);
+            delegatedValue = cast; // in case we loop over several CAST actions
         }
-        JsonValue cast = CastFactory.getInstance().cast(delegatedValue, castAttribute);
-
 
         return cast;
     }

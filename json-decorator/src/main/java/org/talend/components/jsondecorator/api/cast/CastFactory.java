@@ -25,7 +25,7 @@ public class CastFactory {
         // Singleton pattern
     }
 
-    public JsonValue cast(JsonValue v, JsonDecoratorBuilder.CastAttribute castAttribute) throws JsonDecoratorCastException {
+    public JsonValue cast(JsonValue v, JsonDecoratorBuilder.JsonDecoratorConfiguration castAttribute) throws JsonDecoratorCastException {
         JsonValue.ValueType valueType = v.getValueType();
         Cast cast = null;
         switch (valueType) {

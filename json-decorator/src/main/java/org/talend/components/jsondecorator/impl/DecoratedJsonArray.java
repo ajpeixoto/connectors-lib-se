@@ -13,7 +13,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,19 +22,21 @@ class DecoratedJsonArray extends DecoratedJsonValueImpl implements JsonArray {
 
     DecoratedJsonArray(JsonValue delegate, JsonDecoratorBuilder.JsonDecorator decorator, String path, JsonValue parent) {
         super(delegate, decorator, path, parent);
-        //this.delegateAsJsonArray = JsonArray.class.cast(super.getDelegate());
 
-        Optional<JsonDecoratorBuilder.FilterByTypes> optionalFilterByType = this.getDecorator().getFilterByType(this.getPath());
+        List<JsonDecoratorBuilder.JsonDecoratorConfiguration> filters = this.getDecorator().getConfigurations(this.getPath(), JsonDecoratorBuilder.JsonDecoratorAction.FILTER);
 
         Stream<JsonValue> stream = JsonArray.class.cast(super.getDelegate()).stream();
 
-        if(optionalFilterByType.isPresent()){
-            stream = stream.filter(e -> optionalFilterByType.get().getTypes().stream().map(f -> f.accept(e)).reduce(false, (a, b) -> a || b));
+        List<JsonDecoratorBuilder.ValueTypeExtended> filtersTypes = filters.stream().map(f -> f.getType()).collect(Collectors.toList());
+
+        if(!filters.isEmpty()){
+            stream = stream
+                    .filter(e -> filtersTypes.stream().map(t -> t.accept(e)).reduce(false, (y, z) -> y || z));
         }
 
         List<JsonValue> values = stream.map(v -> {
             try {
-                return this.getDecorator().cast(this.getPath(), v);
+                return this.getDecorator().cast( this.buildPath("*"), v);
             } catch (JsonDecoratorCastException e) {
                 throw new RuntimeException(e);
             }

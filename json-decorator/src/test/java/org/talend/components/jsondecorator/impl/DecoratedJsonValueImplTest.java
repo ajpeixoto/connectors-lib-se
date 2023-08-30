@@ -3,16 +3,13 @@ package org.talend.components.jsondecorator.impl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.talend.components.jsondecorator.api.DecoratedJsonValue;
 import org.talend.components.jsondecorator.api.JsonDecoratorBuilder;
 
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.json.JsonPatch;
 import javax.json.JsonString;
 import javax.json.JsonValue;
@@ -24,9 +21,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 class DecoratedJsonValueImplTest {
 
@@ -63,7 +58,7 @@ class DecoratedJsonValueImplTest {
                 .cast("/content/name", JsonDecoratorBuilder.ValueTypeExtended.ARRAY)
                 .cast("/content/address/zipcode", JsonDecoratorBuilder.ValueTypeExtended.FLOAT)
                 .cast("/content/tel", JsonDecoratorBuilder.ValueTypeExtended.INT)
-                .cast("/content/bag", JsonDecoratorBuilder.ValueTypeExtended.STRING)
+                .cast("/content/bag/*", JsonDecoratorBuilder.ValueTypeExtended.STRING)
                 .build(json);
 
         JsonPatch diff = Json.createDiff(json.asJsonObject(), decoratedJsonValue.asJsonObject());
@@ -128,6 +123,28 @@ class DecoratedJsonValueImplTest {
     }
 
     @ParameterizedTest
+    @ValueSource(strings = {"INT", "STRING,INT", "BOOLEAN,INT", "BOOLEAN,INT,STRING"})
+    public void filterArrayByOneSeveralTypes(String filterTypeStrs) throws IOException {
+        String[] typesStr = filterTypeStrs.split(",");
+        List<JsonDecoratorBuilder.ValueTypeExtended> valueTypesExtended = Arrays.stream(typesStr)
+                .map(t -> JsonDecoratorBuilder.ValueTypeExtended.valueOf(t))
+                .collect(Collectors.toList());
+
+        JsonValue json = TestUtil.loadJson("/json/geologistsComplex.json");
+
+        JsonDecoratorBuilder builder = JsonDecoratorFactoryImpl.getInstance().createBuilder();
+        valueTypesExtended.stream().forEach(t -> builder.filterByType("/content/bag", t));
+        JsonValue decoratedJsonValue = builder.build(json);
+
+        JsonArray content = decoratedJsonValue.asJsonObject().getJsonArray("content");
+        for (JsonObject obj : content.getValuesAs(JsonObject.class)) {
+            JsonArray bag = obj.getJsonArray("bag");
+            Assertions.assertEquals(3 * typesStr.length, bag.size());
+        }
+
+    }
+
+    @ParameterizedTest
     @ValueSource(strings = {
             "STRING,INT",
             "STRING,BOOLEAN",
@@ -179,10 +196,8 @@ class DecoratedJsonValueImplTest {
         JsonDecoratorBuilder builder = JsonDecoratorFactoryImpl.getInstance().createBuilder();
         JsonValue decoratedJsonValue = builder
                 .cast("/second_array/*", JsonDecoratorBuilder.ValueTypeExtended.STRING)
-                .cast("/fourth_array/*/*", JsonDecoratorBuilder.ValueTypeExtended.STRING)
+                .cast("/fourth_array/*/*/*", JsonDecoratorBuilder.ValueTypeExtended.STRING)
                 .build(json);
-
-        JsonPatch diff = Json.createDiff(json.asJsonObject(), decoratedJsonValue.asJsonObject());
 
         JsonValue jsonValue = decoratedJsonValue.asJsonObject().getJsonArray("first_array").getJsonArray(0).get(0);
         Assertions.assertEquals(JsonValue.ValueType.NUMBER, jsonValue.getValueType());
@@ -201,6 +216,41 @@ class DecoratedJsonValueImplTest {
 
         jsonValue = decoratedJsonValue.asJsonObject().getJsonArray("fourth_array").getJsonArray(0).getJsonArray(0).get(0);
         Assertions.assertEquals(JsonValue.ValueType.STRING, jsonValue.getValueType());
+    }
+
+    @Test
+    public void arrayOfArrayCast2() {
+        JsonValue json = TestUtil.loadJson("/json/arrayOfArrays2.json");
+
+        JsonDecoratorBuilder builder = JsonDecoratorFactoryImpl.getInstance().createBuilder();
+        JsonValue decoratedJsonValue = builder
+                .cast("/first_array/*", JsonDecoratorBuilder.ValueTypeExtended.STRING)
+                .cast("/second_array/*", JsonDecoratorBuilder.ValueTypeExtended.STRING)
+                .build(json);
+
+        List<String> expected1 = new ArrayList<>(Arrays.asList("1", "2", "three", "4"));
+        decoratedJsonValue.asJsonObject().getJsonArray("first_array").stream().forEach(e -> {
+            Assertions.assertEquals(JsonValue.ValueType.STRING, e.getValueType());
+            Assertions.assertTrue(expected1.remove(((JsonString)e).getString()));
+        });
+        Assertions.assertTrue(expected1.isEmpty());
+
+        decoratedJsonValue.asJsonObject().getJsonArray("second_array").stream()
+                .forEach(e -> Assertions.assertEquals(JsonValue.ValueType.ARRAY, e.getValueType()));
+
+        JsonArray second_array_1 = decoratedJsonValue.asJsonObject().getJsonArray("second_array").getJsonArray(1);
+        List expected2 = new ArrayList<>(Arrays.asList(7, "height", 9));
+        second_array_1.stream().forEach(e -> {
+            JsonValue.ValueType type = e.getValueType();
+            if(type == JsonValue.ValueType.NUMBER){
+                int n = ((JsonNumber) e).intValue();
+                Assertions.assertTrue(expected2.remove((Integer)n));
+            } else if (type == JsonValue.ValueType.STRING) {
+                String s = ((JsonString) e).getString();
+                Assertions.assertTrue(expected2.remove(s));
+            }
+        });
+        Assertions.assertTrue(expected2.isEmpty());
     }
 
     @ParameterizedTest
@@ -239,7 +289,7 @@ class DecoratedJsonValueImplTest {
         JsonDecoratorBuilder builder = JsonDecoratorFactoryImpl.getInstance().createBuilder()
                 .cast("/content_length", JsonDecoratorBuilder.ValueTypeExtended.STRING)
                 .cast("/content/objects/aaa", JsonDecoratorBuilder.ValueTypeExtended.STRING)
-                .cast("/content/bag", JsonDecoratorBuilder.ValueTypeExtended.STRING);
+                .cast("/content/bag/*", JsonDecoratorBuilder.ValueTypeExtended.STRING);
         JsonValue decoratedJsonValue = builder.build(json);
 
         Set<Map.Entry<String, JsonValue>> entries = decoratedJsonValue.asJsonObject().entrySet();
@@ -256,7 +306,29 @@ class DecoratedJsonValueImplTest {
             JsonArray objects = obj.getJsonArray("objects");
             objects.stream().forEach(o -> Assertions.assertEquals(JsonValue.ValueType.STRING, o.asJsonObject().get("aaa").getValueType()));
         }
-
-
     }
+
+    @Test
+    public void multiCast() throws IOException {
+        JsonValue json = TestUtil.loadJson("/json/geologistsComplex.json");
+
+        JsonDecoratorBuilder builder = JsonDecoratorFactoryImpl.getInstance().createBuilder();
+        JsonValue decoratedJsonValue = builder
+                .cast("/content/age", JsonDecoratorBuilder.ValueTypeExtended.ARRAY)
+                .cast("/content/age/*", JsonDecoratorBuilder.ValueTypeExtended.STRING)
+                .build(json);
+
+        String[] expecteds = {"35", "49", "55", "70", "40"};
+
+        for (int i = 0; i < expecteds.length; i++) {
+            JsonArray content = decoratedJsonValue.asJsonObject().getJsonArray("content");
+            JsonValue age = content.getJsonObject(i).getJsonArray("age");
+            Assertions.assertEquals(JsonValue.ValueType.ARRAY, age.getValueType());
+            JsonValue jsonValue = ((JsonArray)age).get(0);
+            Assertions.assertEquals(JsonValue.ValueType.STRING, jsonValue.getValueType());
+            Assertions.assertEquals(expecteds[i], ((JsonString)jsonValue).getString());
+
+        }
+    }
+
 }

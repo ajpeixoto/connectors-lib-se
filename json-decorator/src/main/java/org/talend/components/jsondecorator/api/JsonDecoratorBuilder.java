@@ -84,36 +84,25 @@ public interface JsonDecoratorBuilder {
     }
 
     interface JsonDecorator {
-        Map<String, CastAttribute> getCastAttributeMap();
+        List<JsonDecoratorConfiguration> getConfigurations(String path, JsonDecoratorAction action);
 
-        Map<String, FilterByTypes> getFilterByTypeMap();
-
-        Optional<CastAttribute> getCast(String path);
-
-        Optional<FilterByTypes> getFilterByType(String path);
+        List<JsonDecoratorConfiguration> getAllConfigurations();
 
         JsonValue cast(String path, JsonValue delegatedValue) throws JsonDecoratorCastException;
 
     }
 
-    @Data
     @AllArgsConstructor
-    class CastAttribute {
+    @Data
+    class JsonDecoratorConfiguration {
         private final String path;
+        private final JsonDecoratorAction action;
         private final ValueTypeExtended type;
         private final String forceNullValue;
     }
 
-    @Data
-    @AllArgsConstructor
-    class FilterByTypes {
-
-        public FilterByTypes(String path){
-            this.path = path;
-            this.types = new ArrayList<>();
-        }
-
-        private final String path;
-        private final List<ValueTypeExtended> types;
+    public enum JsonDecoratorAction {
+        CAST, FILTER
     }
+
 }
