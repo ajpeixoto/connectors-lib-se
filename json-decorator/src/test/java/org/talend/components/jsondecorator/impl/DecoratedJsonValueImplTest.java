@@ -367,4 +367,40 @@ class DecoratedJsonValueImplTest {
 
     }
 
+    @Test
+    public void objectGetter() {
+        JsonValue json = TestUtil.loadJson("/json/Object.json");
+
+        JsonDecoratorBuilder builder = JsonDecoratorFactoryImpl.getInstance().createBuilder();
+        builder.cast("/a_bool", JsonDecoratorBuilder.ValueTypeExtended.STRING)
+                .cast("/a_int", JsonDecoratorBuilder.ValueTypeExtended.STRING)
+                .cast("/a_float", JsonDecoratorBuilder.ValueTypeExtended.STRING)
+                .cast("/a_string", JsonDecoratorBuilder.ValueTypeExtended.ARRAY)
+                .cast("/an_array", JsonDecoratorBuilder.ValueTypeExtended.STRING)
+                .cast("/an_object", JsonDecoratorBuilder.ValueTypeExtended.ARRAY);
+        JsonValue decoratedJsonValue = builder.build(json);
+
+        Assertions.assertEquals("true", decoratedJsonValue.asJsonObject().getString("a_bool"));
+        Assertions.assertEquals("10", decoratedJsonValue.asJsonObject().getString("a_int"));
+        Assertions.assertEquals("3.14", decoratedJsonValue.asJsonObject().getString("a_float"));
+        Assertions.assertEquals("Hello", decoratedJsonValue.asJsonObject().getJsonArray("a_string").getString(0));
+        Assertions.assertEquals("[1,2,3,4]", decoratedJsonValue.asJsonObject().getString("an_array"));
+
+        Assertions.assertEquals(false, decoratedJsonValue.asJsonObject().getJsonArray("an_object")
+                .getJsonObject(0).getBoolean("nested_bool"));
+        Assertions.assertEquals(20, decoratedJsonValue.asJsonObject().getJsonArray("an_object")
+                .getJsonObject(0).getInt("nested_int"));
+        Assertions.assertEquals(7.14, decoratedJsonValue.asJsonObject().getJsonArray("an_object")
+                .getJsonObject(0).getJsonNumber("nested_float").doubleValue());
+        Assertions.assertEquals("Bye", decoratedJsonValue.asJsonObject().getJsonArray("an_object")
+                .getJsonObject(0).getString("nested_string"));
+        JsonArray nestedArray = decoratedJsonValue.asJsonObject().getJsonArray("an_object")
+                .getJsonObject(0).getJsonArray("nested_array");
+        Assertions.assertEquals(4, nestedArray.size());
+        Assertions.assertEquals(5, nestedArray.getInt(0));
+        Assertions.assertEquals(6, nestedArray.getInt(1));
+        Assertions.assertEquals(7, nestedArray.getInt(2));
+        Assertions.assertEquals(8, nestedArray.getInt(3));
+    }
+
 }

@@ -3,6 +3,7 @@ package org.talend.components.jsondecorator.impl;
 import org.talend.components.jsondecorator.api.JsonDecoratorBuilder;
 import org.talend.components.jsondecorator.api.cast.JsonDecoratorCastException;
 
+import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
@@ -47,58 +48,60 @@ class DecoratedJsonObject extends DecoratedJsonValueImpl implements JsonObject {
 
     @Override
     public String getString(String s) {
-        //return this.delegateAsJsonObject.getString(s);
         return ((JsonString)this.get(s)).getString();
     }
 
     @Override
     public String getString(String s, String s1) {
-        return this.delegateAsJsonObject.getString(s, s1);
+        JsonValue v = this.get(s);
+        return v != null && v instanceof JsonString ? (JsonString.class.cast(v)).getString() : s1;
     }
 
     @Override
     public int getInt(String s) {
-        return this.delegateAsJsonObject.getInt(s);
+        return ((JsonNumber)this.get(s)).intValue();
     }
 
     @Override
     public int getInt(String s, int i) {
-        return this.delegateAsJsonObject.getInt(s, i);
+        JsonValue v = this.get(s);
+        return v != null && v instanceof JsonNumber ? (JsonNumber.class.cast(v)).intValue() : i;
     }
 
     @Override
     public boolean getBoolean(String s) {
-        return this.delegateAsJsonObject.getBoolean(s);
+        return this.get(s) == JsonValue.TRUE;
     }
 
     @Override
     public boolean getBoolean(String s, boolean b) {
-        return this.delegateAsJsonObject.getBoolean(s, b);
+        JsonValue v = this.get(s);
+        return (v != null && (v == JsonValue.TRUE || v != JsonValue.FALSE)) ? v == JsonValue.TRUE : b;
     }
 
     @Override
     public boolean isNull(String s) {
-        return this.delegateAsJsonObject.isNull(s);
+        return this.get(s) == JsonValue.NULL;
     }
 
     @Override
     public int size() {
-        return this.delegateAsJsonObject.size();
+        return this.entrySet().size();
     }
 
     @Override
     public boolean isEmpty() {
-        return this.delegateAsJsonObject.isEmpty();
+        return this.size() == 0;
     }
 
     @Override
     public boolean containsKey(Object key) {
-        return this.delegateAsJsonObject.containsKey(key);
+        return this.entrySet().stream().map(e -> e.getKey()).filter(e -> e.equals(key)).findFirst().isPresent();
     }
 
     @Override
     public boolean containsValue(Object value) {
-        return this.delegateAsJsonObject.containsValue(value);
+        return this.entrySet().stream().map(e -> e.getValue()).filter(e -> e.equals(value)).findFirst().isPresent();
     }
 
     @Override

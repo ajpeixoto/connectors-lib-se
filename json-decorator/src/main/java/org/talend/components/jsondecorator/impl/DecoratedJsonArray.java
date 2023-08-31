@@ -79,37 +79,40 @@ class DecoratedJsonArray extends DecoratedJsonValueImpl implements JsonArray {
 
     @Override
     public String getString(int i) {
-        return this.delegateAsJsonArray.getString(i);
+        return ((JsonString)this.get(i)).getString();
     }
 
     @Override
     public String getString(int i, String s) {
-        return this.delegateAsJsonArray.getString(i, s);
+        JsonValue v = this.get(i);
+        return (v != null && JsonString.class.isInstance(v)) ? JsonString.class.cast(v).getString() : s;
     }
 
     @Override
     public int getInt(int i) {
-        return this.delegateAsJsonArray.getInt(i);
+        return ((JsonNumber)this.get(i)).intValue();
     }
 
     @Override
     public int getInt(int i, int i1) {
-        return this.delegateAsJsonArray.getInt(i, i1);
+        JsonValue v = this.get(i);
+        return (v != null && JsonNumber.class.isInstance(v)) ? JsonNumber.class.cast(v).intValue() : i1;
     }
 
     @Override
     public boolean getBoolean(int i) {
-        return this.delegateAsJsonArray.getBoolean(i);
+        return this.get(i) == JsonValue.TRUE;
     }
 
     @Override
     public boolean getBoolean(int i, boolean b) {
-        return this.delegateAsJsonArray.getBoolean(i, b);
+        JsonValue v = this.get(i);
+        return (v != null && (v == JsonValue.TRUE || v == JsonValue.FALSE)) ? v == JsonValue.TRUE : b;
     }
 
     @Override
     public boolean isNull(int i) {
-        return this.delegateAsJsonArray.isNull(i);
+        return this.get(i) == JsonValue.NULL;
     }
 
     @Override
@@ -253,5 +256,10 @@ class DecoratedJsonArray extends DecoratedJsonValueImpl implements JsonArray {
             }
             return e;
         });
+    }
+
+    @Override
+    public String toString(){
+        return this.delegateAsJsonArray.toString();
     }
 }
