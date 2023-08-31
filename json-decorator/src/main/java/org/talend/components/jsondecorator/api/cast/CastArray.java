@@ -6,12 +6,12 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 import java.math.BigInteger;
 import java.util.stream.Collectors;
 
-@Deprecated
 public class CastArray implements Cast<JsonArray> {
     @Override
     public JsonArray toArray(JsonArray value) throws JsonDecoratorCastException {
@@ -20,12 +20,18 @@ public class CastArray implements Cast<JsonArray> {
 
     @Override
     public JsonObject toObject(JsonArray value) throws JsonDecoratorCastException {
-        throw new JsonDecoratorCastException("Can't cast JsonArray to Object.");
+        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+        for(int i=1; i<value.size(); i++){
+            objectBuilder.add("field_"+i, value.get(i));
+        }
+
+        return objectBuilder.build();
     }
 
     @Override
     public JsonString toString(JsonArray value) throws JsonDecoratorCastException {
-        throw new JsonDecoratorCastException("Can't cast JsonArray to String.");
+        String s = value.toString();
+        return Json.createValue(s);
     }
 
     @Override
@@ -53,7 +59,7 @@ public class CastArray implements Cast<JsonArray> {
      */
     @Override
     public JsonValue toBoolean(JsonArray value) throws JsonDecoratorCastException {
-        JsonValue bool = value.isEmpty() ? JsonValue.TRUE : JsonValue.FALSE;
+        JsonValue bool = value.isEmpty() ? JsonValue.FALSE : JsonValue.TRUE;
         return bool;
     }
 }

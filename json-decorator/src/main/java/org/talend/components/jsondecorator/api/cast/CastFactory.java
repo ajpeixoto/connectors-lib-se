@@ -45,8 +45,8 @@ public class CastFactory {
                 cast = castByType.computeIfAbsent(valueType, k -> new CastObject());
                 break;
             case ARRAY:
-                /* cast = castByType.computeIfAbsent(valueType, k -> new CastArray());*/
-                return v;
+                cast = castByType.computeIfAbsent(valueType, k -> new CastArray());
+                break;
             default:
                 cast = castByType.computeIfAbsent(valueType, k -> new CastIdent());
         }
