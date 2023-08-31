@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.talend.components</groupId>
 	<artifactId>talend-mscrm</artifactId>
-	<version>3.16-20230612</version>
+	<version>3.16-20230817</version>
 	<packaging>jar</packaging>
 
 	<name>talend-mscrm</name>
@@ -26,7 +26,6 @@
 		<httpclient.version>4.5.13</httpclient.version>
 		<httpcore.version>4.4.13</httpcore.version>
 		<junit.version>4.13.2</junit.version>
-		<adal4j.version>1.6.6-20220707</adal4j.version>
 		<jackson.version>2.13.4</jackson.version>
 		<jackson-databind.version>2.13.4.2</jackson-databind.version>
 
@@ -34,7 +33,7 @@
 		<maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
 
-		<nimbus-jose-jwt.version>9.22</nimbus-jose-jwt.version>
+		<nimbus-jose-jwt.version>9.30.2</nimbus-jose-jwt.version>
 		<woodstox-core.version>6.5.0</woodstox-core.version>
 		<reactor-netty.version>1.0.25</reactor-netty.version>
 
