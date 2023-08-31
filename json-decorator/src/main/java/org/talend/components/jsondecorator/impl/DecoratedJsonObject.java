@@ -47,7 +47,8 @@ class DecoratedJsonObject extends DecoratedJsonValueImpl implements JsonObject {
 
     @Override
     public String getString(String s) {
-        return this.delegateAsJsonObject.getString(s);
+        //return this.delegateAsJsonObject.getString(s);
+        return ((JsonString)this.get(s)).getString();
     }
 
     @Override

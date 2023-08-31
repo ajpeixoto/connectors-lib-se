@@ -339,4 +339,32 @@ class DecoratedJsonValueImplTest {
         }
     }
 
+    @Test
+    public void sanitazeArray() {
+        JsonValue json = TestUtil.loadJson("/json/arrayToSanitize.json");
+
+        JsonDecoratorBuilder builder = JsonDecoratorFactoryImpl.getInstance().createBuilder();
+        builder.cast("/data/*/types", JsonDecoratorBuilder.ValueTypeExtended.ARRAY);
+        builder.filterByType("/data/*/types", JsonDecoratorBuilder.ValueTypeExtended.OBJECT);
+        builder.cast("/data/*/types/*/default", JsonDecoratorBuilder.ValueTypeExtended.STRING);
+        JsonValue decoratedJsonValue = builder.build(json);
+
+        decoratedJsonValue.asJsonObject().getJsonArray("data").stream().forEach(e -> {
+            e.asJsonObject().getJsonArray("types").stream().forEach(l -> Assertions.assertEquals(JsonValue.ValueType.OBJECT, l.getValueType()));
+        });
+
+        Assertions.assertEquals("String", decoratedJsonValue.asJsonObject().getJsonArray("data")
+                .getJsonObject(0).getJsonArray("types").getJsonObject(0).getString("name"));
+
+        Assertions.assertEquals("<empty>", decoratedJsonValue.asJsonObject().getJsonArray("data")
+                .getJsonObject(0).getJsonArray("types").getJsonObject(0).getString("default"));
+
+        Assertions.assertEquals("Int", decoratedJsonValue.asJsonObject().getJsonArray("data")
+                .getJsonObject(1).getJsonArray("types").getJsonObject(0).getString("name"));
+
+        Assertions.assertEquals("0", decoratedJsonValue.asJsonObject().getJsonArray("data")
+                .getJsonObject(1).getJsonArray("types").getJsonObject(0).getString("default"));
+
+    }
+
 }
