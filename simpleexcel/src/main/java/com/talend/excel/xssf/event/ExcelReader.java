@@ -173,8 +173,10 @@ public class ExcelReader implements Callable {
             WorkbookDocument doc = WorkbookDocument.Factory.parse(workbookXml);
             CTWorkbook wb = doc.getWorkbook();
             CTWorkbookPr prefix = wb.getWorkbookPr();
-            isDate1904 = prefix.getDate1904();
-
+            //TDI-50218 Only for NPE about some customer generated Excel which have WorkbookPr missing
+            if( prefix != null){
+                isDate1904 = prefix.getDate1904();
+            }
             StylesTable styles = r.getStylesTable();
             ReadOnlySharedStringsTable strings = new ReadOnlySharedStringsTable(pkg, includePhoneticRuns);
             sheetContentsHandler = new DefaultTalendSheetContentsHandler(cache);
