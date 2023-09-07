@@ -9,6 +9,7 @@
   <packaging>pom</packaging>
 
   <modules>
+    <module>connectors-common</module>
     <module>azure-utils</module>
     <module>simpleexcel</module>
     <module>soap</module>
@@ -19,6 +20,7 @@
     <module>talend-sql-injection-utils</module>
     <module>talend-ws</module>
     <module>talendzip</module>
+    <module>common-httpclient</module>
   </modules>
 
   <name>Connectors Library SE :: Aggregator</name>
