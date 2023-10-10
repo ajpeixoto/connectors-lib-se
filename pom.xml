@@ -10,6 +10,7 @@
 
   <modules>
     <module>azure-utils</module>
+    <module>google-storage-utils</module>
     <module>simpleexcel</module>
     <module>soap</module>
     <module>talend_file_enhanced</module>
