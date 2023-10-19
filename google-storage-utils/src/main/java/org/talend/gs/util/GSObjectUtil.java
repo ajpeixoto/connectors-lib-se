@@ -98,14 +98,13 @@ public class GSObjectUtil {
                 remotedir = remotedir + "/";
             }
         }
-        java.util.Map<String, String> fileMap = new HashMap<String, String>();
+        java.util.Map<String, String> fileMap = new HashMap<>();
         for (java.util.Map<String, String> map : list) {
             java.util.Set<String> keySet = map.keySet();
             for (String key : keySet) {
                 String tempdir = localdir;
-                String filemask = key;
                 String dir = null;
-                String mask = filemask.replaceAll("\\\\", "/");
+                String mask = key;
                 int i = mask.lastIndexOf('/');
                 if (i != -1) {
                     dir = mask.substring(0, i);

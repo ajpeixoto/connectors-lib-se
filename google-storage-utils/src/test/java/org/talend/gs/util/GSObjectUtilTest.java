@@ -1,11 +1,19 @@
 package org.talend.gs.util;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -80,8 +88,8 @@ class GSObjectUtilTest {
     }
 
     @Test
-    void oneFileWithCustomPathTest(){
-        Path pathToFile = Paths.get("src","test", "resources", "empty.csv");
+    void oneFileWithCustomPathTest() {
+        Path pathToFile = Paths.get("src", "test", "resources", "empty.csv");
         String pathToFolder = "/folder/folder";
         File expectedFile = new File(pathToFile.toUri());
         GSObjectUtil gsObjectUtil = new GSObjectUtil();
@@ -96,8 +104,8 @@ class GSObjectUtilTest {
     }
 
     @Test
-    void oneFileWithOtherCustomPathTest(){
-        Path pathToFile = Paths.get("src","test", "resources", "empty.csv");
+    void oneFileWithOtherCustomPathTest() {
+        Path pathToFile = Paths.get("src", "test", "resources", "empty.csv");
         String pathToFolder = "folder/folder";
         File expectedFile = new File(pathToFile.toUri());
         GSObjectUtil gsObjectUtil = new GSObjectUtil();
@@ -112,7 +120,7 @@ class GSObjectUtilTest {
     }
 
     @Test
-    void folderWithOtherCustomPathTest(){
+    void folderWithOtherCustomPathTest() {
         Path pathToFolder = Paths.get("src", "test", "resources", "dirWithThreeFiles", "inner");
         String pathToGSFolder = "folder";
         File folder = new File(pathToFolder.toUri());
@@ -126,5 +134,31 @@ class GSObjectUtilTest {
         assertEquals(1, files.size());
         assertTrue(files.containsKey(expectedRelativePathToFile));
         assertEquals(expectedFile.getAbsoluteFile(), files.get(expectedRelativePathToFile).getAbsoluteFile());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "1.csv,1.csv",
+            "inner/1.csv,inner/1.csv",
+            "inner/*.csv,inner/1.csv",
+            "inner/(1).csv,inner/1.csv",
+            "inner/[1].csv,inner/1.csv",
+            "inner2/\\(empty\\).csv,inner2/(empty).csv"
+    })
+    void genFileFilterList(final String fileTemplate, final String expectedName) {
+        final List<Map<String, String>> list = new ArrayList<>();
+        list.add(new HashMap<String, String>() {{
+            put(fileTemplate, "fooName.csv");
+        }});
+        final String localdir = "src/test/resources/dirEmptyFiles";
+        final String remotedir = "someDir";
+
+        final GSObjectUtil gsObjectUtil = new GSObjectUtil();
+        final Map<String, String> map = gsObjectUtil.genFileFilterList(list, localdir, remotedir);
+
+        Assertions.assertFalse(map.isEmpty());
+        for (final Entry<String, String> entry : map.entrySet()) {
+            Assertions.assertEquals(Paths.get(localdir, expectedName).toAbsolutePath().toString(), entry.getKey());
+        }
     }
 }
