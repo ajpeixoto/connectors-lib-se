@@ -20,6 +20,7 @@
     <module>talend-sql-injection-utils</module>
     <module>talend-ws</module>
     <module>talendzip</module>
+    <module>servicenow</module>
   </modules>
 
   <name>Connectors Library SE :: Aggregator</name>
