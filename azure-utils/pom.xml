@@ -7,12 +7,12 @@
 
 	<groupId>org.talend.components.lib</groupId>
 	<artifactId>azure-utils</artifactId>
-	<version>1.0.5</version>
+	<version>1.0.5.1</version>
 
 	<licenses>
 		<license>
 			<name>Apache License, Version 2.0</name>
-			<url>https://github.com/Talend/tdi-studio-se/blob/master/main/plugins/org.talend.designer.components.libs/libs_src/azure-utils/LICENSE</url>
+			<url>https://github.com/Talend/connectors-lib-se/blob/main/azure-utils/pom.xml</url>
 			<distribution>may be downloaded from the Maven repository</distribution>
 		</license>
 	</licenses>
@@ -196,7 +196,7 @@
 		<commons-io.version>2.8.0</commons-io.version>
 		<commons-codec.version>1.14</commons-codec.version>
 
-		<netty4.version>4.1.86.Final</netty4.version>
+		<netty4.version>4.1.101.Final</netty4.version>
 		<netty-tcnative-boringssl-static.version>2.0.56.Final</netty-tcnative-boringssl-static.version>
 
 		<json-smart.version>2.4.11</json-smart.version>
