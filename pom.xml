@@ -21,6 +21,7 @@
     <module>talend-ws</module>
     <module>talendzip</module>
     <module>servicenow</module>
+    <module>advancedPersistentLookupLib</module>
   </modules>
 
   <name>Connectors Library SE :: Aggregator</name>
