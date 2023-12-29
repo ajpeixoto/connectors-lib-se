@@ -21,6 +21,19 @@
     <jboss.jar.directory>${tcommon.studio.se.path}/org.talend.libraries.jboss.jars/lib</jboss.jar.directory>
   </properties>
 
+  <repositories>
+    <repository>
+      <id>Eclipse Releases Repository</id>
+      <url>https://repo.eclipse.org/content/groups/releases/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>org.jboss.marshalling</groupId>
@@ -43,72 +56,101 @@
       <version>1.2.22</version>
     </dependency>
 
+    <!--    &lt;!&ndash; https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.platform.doc.isv &ndash;&gt;-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.eclipse.platform</groupId>-->
+    <!--      <artifactId>org.eclipse.platform.doc.isv</artifactId>-->
+    <!--      <version>4.19.0</version>-->
+    <!--    </dependency>-->
+
+    <!-- https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.core.runtime -->
+    <dependency>
+      <groupId>org.eclipse.platform</groupId>
+      <artifactId>org.eclipse.core.runtime</artifactId>
+      <version>3.20.100</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.core.resources -->
+    <dependency>
+      <groupId>org.eclipse.platform</groupId>
+      <artifactId>org.eclipse.core.resources</artifactId>
+      <version>3.14.0</version>
+      <scope>provided</scope>
+    </dependency>
+<!--    &lt;!&ndash; https://mvnrepository.com/artifact/commons-lang/commons-lang &ndash;&gt;-->
+<!--    <dependency>-->
+<!--      <groupId>commons-lang</groupId>-->
+<!--      <artifactId>commons-lang</artifactId>-->
+<!--      <version>2.6</version>-->
+<!--      <scope>provided</scope>-->
+<!--    </dependency>-->
+
 
     <!-- fixed version -->
     <!-- https://github.com/Talend/tcommon-studio-se/blob/4eb239b829d693f4c6a0516cd2ae8095035d388e/main/plugins/org.talend.libraries.jboss/plugin.xml#L5 -->
-<!--    <dependency>-->
-<!--      <groupId>jboss</groupId>-->
-<!--      <artifactId>jboss-serialization</artifactId>-->
-<!--      <version>1.0.3.GA</version>-->
-<!--      <systemPath>${jboss.jar.directory}/jboss-serialization.jar</systemPath>-->
-<!--      <scope>system</scope>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--      <groupId>trove</groupId>-->
-<!--      <artifactId>trove</artifactId>-->
-<!--      <version>1.0.2</version>-->
-<!--      <systemPath>${jboss.jar.directory}/trove.jar</systemPath>-->
-<!--      <scope>system</scope>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--      <groupId>jboss</groupId>-->
-<!--      <artifactId>jbossall-client</artifactId>-->
-<!--      <version>4.2.0.GA</version>-->
-<!--      <systemPath>${jboss.jar.directory}/jbossall-client.jar</systemPath>-->
-<!--      <scope>system</scope>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--      <groupId>org.jboss.aop</groupId>-->
-<!--      <artifactId>jboss-aop</artifactId>-->
-<!--      <version>2.1.3.GA</version>-->
-<!--      <systemPath>${jboss.jar.directory}/jboss-aop.jar</systemPath>-->
-<!--      <scope>system</scope>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--      <groupId>org.jboss</groupId>-->
-<!--      <artifactId>jboss-common-core</artifactId>-->
-<!--      <version>2.2.11.GA</version>-->
-<!--      <systemPath>${jboss.jar.directory}/jboss-common-core.jar</systemPath>-->
-<!--      <scope>system</scope>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--      <groupId>org.jboss</groupId>-->
-<!--      <artifactId>jboss-j2ee</artifactId>-->
-<!--      <version>4.0.2</version>-->
-<!--      <systemPath>${jboss.jar.directory}/jboss-j2ee-4.0.2.jar</systemPath>-->
-<!--      <scope>system</scope>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--      <groupId>org.jboss</groupId>-->
-<!--      <artifactId>jboss-mdr</artifactId>-->
-<!--      <version>2.0.1.GA</version>-->
-<!--      <systemPath>${jboss.jar.directory}/jboss-mdr.jar</systemPath>-->
-<!--      <scope>system</scope>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--      <groupId>org.jboss</groupId>-->
-<!--      <artifactId>jboss-messaging-client</artifactId>-->
-<!--      <version>1.4.4.GA</version>-->
-<!--      <systemPath>${jboss.jar.directory}/jboss-messaging-client.jar</systemPath>-->
-<!--      <scope>system</scope>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--      <groupId>org.jboss</groupId>-->
-<!--      <artifactId>jboss-remoting</artifactId>-->
-<!--      <version>2.2.3</version>-->
-<!--      <systemPath>${jboss.jar.directory}/jboss-remoting.jar</systemPath>-->
-<!--      <scope>system</scope>-->
-<!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>jboss</groupId>-->
+    <!--      <artifactId>jboss-serialization</artifactId>-->
+    <!--      <version>1.0.3.GA</version>-->
+    <!--      <systemPath>${jboss.jar.directory}/jboss-serialization.jar</systemPath>-->
+    <!--      <scope>system</scope>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>trove</groupId>-->
+    <!--      <artifactId>trove</artifactId>-->
+    <!--      <version>1.0.2</version>-->
+    <!--      <systemPath>${jboss.jar.directory}/trove.jar</systemPath>-->
+    <!--      <scope>system</scope>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>jboss</groupId>-->
+    <!--      <artifactId>jbossall-client</artifactId>-->
+    <!--      <version>4.2.0.GA</version>-->
+    <!--      <systemPath>${jboss.jar.directory}/jbossall-client.jar</systemPath>-->
+    <!--      <scope>system</scope>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.jboss.aop</groupId>-->
+    <!--      <artifactId>jboss-aop</artifactId>-->
+    <!--      <version>2.1.3.GA</version>-->
+    <!--      <systemPath>${jboss.jar.directory}/jboss-aop.jar</systemPath>-->
+    <!--      <scope>system</scope>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.jboss</groupId>-->
+    <!--      <artifactId>jboss-common-core</artifactId>-->
+    <!--      <version>2.2.11.GA</version>-->
+    <!--      <systemPath>${jboss.jar.directory}/jboss-common-core.jar</systemPath>-->
+    <!--      <scope>system</scope>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.jboss</groupId>-->
+    <!--      <artifactId>jboss-j2ee</artifactId>-->
+    <!--      <version>4.0.2</version>-->
+    <!--      <systemPath>${jboss.jar.directory}/jboss-j2ee-4.0.2.jar</systemPath>-->
+    <!--      <scope>system</scope>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.jboss</groupId>-->
+    <!--      <artifactId>jboss-mdr</artifactId>-->
+    <!--      <version>2.0.1.GA</version>-->
+    <!--      <systemPath>${jboss.jar.directory}/jboss-mdr.jar</systemPath>-->
+    <!--      <scope>system</scope>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.jboss</groupId>-->
+    <!--      <artifactId>jboss-messaging-client</artifactId>-->
+    <!--      <version>1.4.4.GA</version>-->
+    <!--      <systemPath>${jboss.jar.directory}/jboss-messaging-client.jar</systemPath>-->
+    <!--      <scope>system</scope>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.jboss</groupId>-->
+    <!--      <artifactId>jboss-remoting</artifactId>-->
+    <!--      <version>2.2.3</version>-->
+    <!--      <systemPath>${jboss.jar.directory}/jboss-remoting.jar</systemPath>-->
+    <!--      <scope>system</scope>-->
+    <!--    </dependency>-->
   </dependencies>
 
   <build>
@@ -149,7 +191,9 @@
               <outputDirectory>${gen.source.directory}/org/talend/designer/components/thash</outputDirectory>
               <resources>
                 <resource>
-                  <directory>${tdi.studio.se.path}/org.talend.designer.components.localprovider/src/main/java/org/talend/designer/components/thash</directory>
+                  <directory>
+                    ${tdi.studio.se.path}/org.talend.designer.components.localprovider/src/main/java/org/talend/designer/components/thash
+                  </directory>
                 </resource>
               </resources>
             </configuration>
@@ -165,7 +209,9 @@
               <outputDirectory>${gen.source.directory}/org/talend/designer/components/persistent</outputDirectory>
               <resources>
                 <resource>
-                  <directory>${tdi.studio.se.path}/org.talend.designer.components.localprovider/src/main/java/org/talend/designer/components/persistent</directory>
+                  <directory>
+                    ${tdi.studio.se.path}/org.talend.designer.components.localprovider/src/main/java/org/talend/designer/components/persistent
+                  </directory>
                 </resource>
               </resources>
             </configuration>
@@ -181,7 +227,9 @@
               <outputDirectory>${gen.source.directory}/org/talend/designer/components/lookup</outputDirectory>
               <resources>
                 <resource>
-                  <directory>${tdi.studio.se.path}/org.talend.designer.components.localprovider/src/main/java/org/talend/designer/components/lookup</directory>
+                  <directory>
+                    ${tdi.studio.se.path}/org.talend.designer.components.localprovider/src/main/java/org/talend/designer/components/lookup
+                  </directory>
                 </resource>
               </resources>
             </configuration>
@@ -197,7 +245,9 @@
               <outputDirectory>${gen.source.directory}/org/talend/commons/utils/data/map</outputDirectory>
               <resources>
                 <resource>
-                  <directory>${tcommon.studio.se.path}/org.talend.commons.runtime/src/org/talend/commons/utils/data/map</directory>
+                  <directory>
+                    ${tcommon.studio.se.path}/org.talend.commons.runtime/src/org/talend/commons/utils/data/map
+                  </directory>
                   <includes>
                     <include>MultiLazyValuesMap.java</include>
                   </includes>
@@ -216,7 +266,8 @@
               <outputDirectory>${gen.source.directory}/org/talend/commons/utils/time</outputDirectory>
               <resources>
                 <resource>
-                  <directory>${tcommon.studio.se.path}/org.talend.commons.runtime/src/org/talend/commons/utils/time</directory>
+                  <directory>${tcommon.studio.se.path}/org.talend.commons.runtime/src/org/talend/commons/utils/time
+                  </directory>
                 </resource>
               </resources>
             </configuration>
@@ -232,7 +283,9 @@
               <outputDirectory>${gen.source.directory}/org/talend/core/model/process</outputDirectory>
               <resources>
                 <resource>
-                  <directory>${tcommon.studio.se.path}/org.talend.core.runtime/src/main/java/org/talend/core/model/process</directory>
+                  <directory>
+                    ${tcommon.studio.se.path}/org.talend.core.runtime/src/main/java/org/talend/core/model/process
+                  </directory>
                   <includes>
                     <include>IMatchingMode.java</include>
                     <include>ILookupMode.java</include>
@@ -245,6 +298,7 @@
           <!-- Need this sources only for compilation to fake the compilation -->
           <!-- it's a hack not because of the easy life -->
           <!-- !!!NOTE: It should not be inside the jar!!! -->
+          <!-- TODO: remove those clases-->
           <!-- from tcommon-studio-se -->
           <execution>
             <id>copy-org.talend.librariesmanager-process</id>
@@ -256,10 +310,12 @@
               <outputDirectory>${gen.source.directory}/routines/system</outputDirectory>
               <resources>
                 <resource>
-                  <directory>${tcommon.studio.se.path}/org.talend.librariesmanager/resources/java/routines/system</directory>
+                  <directory>${tcommon.studio.se.path}/org.talend.librariesmanager/resources/java/routines/system
+                  </directory>
                   <includes>
                     <include>IPersistableLookupRow.java</include>
                     <include>IPersistableComparableLookupRow.java</include>
+                    <include>IPersistableRow.java</include>
                   </includes>
                 </resource>
               </resources>
@@ -272,12 +328,46 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${gen.source.directory}/org/talend/commons/exception</outputDirectory>
+              <outputDirectory>${gen.source.directory}/org/talend/commons</outputDirectory>
               <resources>
                 <resource>
-                  <directory>${tcommon.studio.se.path}/org.talend.commons.runtime/src/org/talend/commons/exception</directory>
+                  <directory>${tcommon.studio.se.path}/org.talend.commons.runtime/src/org/talend/commons
+                  </directory>
                   <includes>
-                    <include>CommonExceptionHandler.java</include>
+                    <include>exception/CommonExceptionHandler.java</include>
+                  </includes>
+                </resource>
+                <resource>
+                  <directory>${tcommon.studio.se.path}/org.talend.commons.runtime/src/org/talend/commons
+                  </directory>
+                  <includes>
+                    <include>runtime/debug/TalendDebugHandler.java</include>
+                  </includes>
+                </resource>
+<!--                <resource>-->
+<!--                  <directory>${tcommon.studio.se.path}/org.talend.commons.runtime/src/org/talend/commons-->
+<!--                  </directory>-->
+<!--                  <includes>-->
+<!--                    <include>CommonsPlugin.java</include>-->
+<!--                  </includes>-->
+<!--                </resource>-->
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-org.talend.common.ui.runtime</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${gen.source.directory}/org/talend/commons/ui/runtime/exception</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${tcommon.studio.se.path}/org.talend.common.ui.runtime/src/main/java/org/talend/commons/ui/runtime/exception
+                  </directory>
+                  <includes>
+                    <include>ExceptionHandler.java</include>
                   </includes>
                 </resource>
               </resources>
