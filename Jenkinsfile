@@ -18,6 +18,14 @@ final nexusCredentials = usernamePassword(
         credentialsId: 'nexus-artifact-zl-credentials',
         usernameVariable: 'NEXUS_USER',
         passwordVariable: 'NEXUS_PASSWORD')
+final def gitCredentials = usernamePassword(
+  credentialsId: 'github-credentials',
+  usernameVariable: 'GITHUB_LOGIN',
+  passwordVariable: 'GITHUB_TOKEN')
+final def sonarCredentials = usernamePassword(
+  credentialsId: 'sonar-credentials',
+  passwordVariable: 'SONAR_PASSWORD',
+  usernameVariable: 'SONAR_LOGIN')
 final String podLabel = "connectors-lib-se-${UUID.randomUUID().toString()}".take(53)
 final String tsbiImage = 'jdk11-svc-springboot-builder'
 final String tsbiVersion = '2.9.18-2.4-20220104141654'
@@ -91,6 +99,35 @@ spec:
     }
 
     stages {
+        stage('Maven sonar') {
+            steps {
+                script {
+                    withCredentials([nexusCredentials,
+                                     sonarCredentials,
+                                     gitCredentials]) {
+                        if (pullRequestId != null) {
+
+                            println 'Run analysis for PR'
+                            sh """\
+                            bash .jenkins/mvn_sonar_pr.sh \
+                                '${branch_name}' \
+                                '${env.CHANGE_TARGET}' \
+                                '${pullRequestId}' \
+                                ${extraBuildParams}
+                            """.stripIndent()
+                        } else {
+                            echo 'Run analysis for branch'
+                            sh """\
+                            bash .jenkins/mvn_sonar_branch.sh \
+                            '${branch_name}' \
+                            ${extraBuildParams}
+                            """.stripIndent()
+                        }
+                    }
+                }
+            }
+        }
+
         stage('Build') {
             when {
                 expression {
@@ -144,6 +181,7 @@ spec:
                 }
             }
         }
+
     }
 
     post {
