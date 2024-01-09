@@ -32,6 +32,11 @@ final String tsbiVersion = '2.9.18-2.4-20220104141654'
 final String m2 = "/tmp/jenkins/tdi/m2/"
 String junits = ""
 
+// In PR environment, the branch name is not valid and should be swap with pr name.
+final String pullRequestId = env.CHANGE_ID
+final String branch_name = pullRequestId != null ? env.CHANGE_BRANCH : env.BRANCH_NAME
+
+
 pipeline {
     parameters {
         choice(name: 'Action',
