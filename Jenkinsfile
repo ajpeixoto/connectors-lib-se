@@ -192,7 +192,7 @@ spec:
 
     }
 
-/**
+
     post {
         success {
             slackSend(color: '#00FF00', message: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})", channel: "${slackChannel}")
@@ -201,49 +201,5 @@ spec:
             slackSend(color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})", channel: "${slackChannel}")
         }
     }
-*/
-}
 
-
-
-/**
- * Assembly all needed items to put inside extraBuildParams
- *
- * @param Boolean fail_at_end, if set to true, --fail-at-end will be added
- * @param Boolean snapshot_update, if set to true, --update-snapshots will be added
- * @param Boolean use_light_maven_enforcer, if set to true, --define use-maven-enforcer-light-rules
- *
- * @return extraBuildParams as a string ready for mvn cmd
- */
-private String extraBuildParams_assembly(Boolean fail_at_end,
-                                         Boolean snapshot_update,
-                                         Boolean use_light_maven_enforcer) {
-    String extraBuildParams
-
-    println 'Processing extraBuildParams'
-    println 'Manage the env.MAVEN_SETTINGS and env.DECRYPTER_ARG'
-    final List<String> buildParamsAsArray = ['--settings',
-                                             env.MAVEN_SETTINGS,
-                                             env.DECRYPTER_ARG] as List<String>
-    println 'Manage the EXTRA_BUILD_PARAMS'
-    buildParamsAsArray.add(params.EXTRA_BUILD_PARAMS)
-    println 'Manage the failed-at-end option'
-    if (fail_at_end) {
-        buildParamsAsArray.add('--fail-at-end')
-    }
-    println 'Manage the --update-snapshots option'
-    if (snapshot_update) {
-        buildParamsAsArray.add('--update-snapshots')
-    }
-
-    println 'Manage the maven-enforcer profile'
-    if (use_light_maven_enforcer) {
-        buildParamsAsArray.add('--define use-maven-enforcer-light-rules')
-    }
-
-    println 'Construct extraBuildParams'
-    extraBuildParams = buildParamsAsArray.join(' ')
-    println "extraBuildParams: $extraBuildParams"
-
-    return extraBuildParams
 }
