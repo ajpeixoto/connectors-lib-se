@@ -48,14 +48,6 @@ pipeline {
         booleanParam(name: "skip_tests",
                 description: "whether skip the junits",
                 defaultValue: false)
-        /*
-        booleanParam(
-          name: 'UPDATE_SNAPSHOT',
-          defaultValue: true,
-          description: '''
-            UPDATE_SNAPSHOT : Add the --update-snapshot (-U) option to all maven cmd.
-            Uncheck this may lean to not have the last version of deployed connectors-se''')
-        */
     }
 
     agent {
@@ -115,16 +107,14 @@ spec:
         stage('Maven sonar') {
             steps {
                 script {
-                    /*
-                    // Build the extraBuildParams content depending on actual run
-                    extraBuildParams = extraBuildParams_assembly(
-                            fail_at_end,
-                            params.UPDATE_SNAPSHOT as Boolean,
-                            isOnMasterOrMaintenanceBranch)
-                    */
                     withCredentials([nexusCredentials,
                                      sonarCredentials,
                                      gitCredentials]) {
+                        echo "The pullRequestId is : ${pullRequestId}"
+                        echo "The branch_name is : ${branch_name}"
+                        echo "The env.CHANGE_TARGET is : ${env.CHANGE_TARGET}"
+                        echo "The SONAR_LOGIN is : ${SONAR_LOGIN}"
+
                         if (pullRequestId != null) {
 
                             println 'Run analysis for PR'
@@ -202,7 +192,7 @@ spec:
 
     }
 
-/*
+/**
     post {
         success {
             slackSend(color: '#00FF00', message: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})", channel: "${slackChannel}")
