@@ -104,8 +104,7 @@ spec:
             steps {
                 script {
                     withCredentials([nexusCredentials,
-                                     sonarCredentials,
-                                     gitCredentials]) {
+                                     sonarCredentials]) {
                         if (pullRequestId != null) {
                             println 'Run analysis for PR'
                             sh """\
