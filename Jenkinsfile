@@ -110,13 +110,7 @@ spec:
                     withCredentials([nexusCredentials,
                                      sonarCredentials,
                                      gitCredentials]) {
-                        echo "The pullRequestId is : ${pullRequestId}"
-                        echo "The branch_name is : ${branch_name}"
-                        echo "The env.CHANGE_TARGET is : ${env.CHANGE_TARGET}"
-                        echo "The SONAR_LOGIN is : ${SONAR_LOGIN}"
-
                         if (pullRequestId != null) {
-
                             println 'Run analysis for PR'
                             sh """\
                             bash .jenkins/mvn_sonar_pr.sh \
