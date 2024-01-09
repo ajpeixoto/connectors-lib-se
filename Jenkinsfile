@@ -18,10 +18,6 @@ final nexusCredentials = usernamePassword(
         credentialsId: 'nexus-artifact-zl-credentials',
         usernameVariable: 'NEXUS_USER',
         passwordVariable: 'NEXUS_PASSWORD')
-final def gitCredentials = usernamePassword(
-  credentialsId: 'github-credentials',
-  usernameVariable: 'GITHUB_LOGIN',
-  passwordVariable: 'GITHUB_TOKEN')
 final def sonarCredentials = usernamePassword(
   credentialsId: 'sonar-credentials',
   passwordVariable: 'SONAR_PASSWORD',
