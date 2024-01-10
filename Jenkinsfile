@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-final String slackChannel = 'components-ci'
 final nexusCredentials = usernamePassword(
         credentialsId: 'nexus-artifact-zl-credentials',
         usernameVariable: 'NEXUS_USER',
@@ -39,48 +38,17 @@ pipeline {
 
     agent {
         kubernetes {
-            label podLabel
-            yaml """
-apiVersion: v1
-kind: Pod
-spec:
-    containers:
-        -
-            name: '${tsbiImage}'
-            image: 'artifactory.datapwn.com/tlnd-docker-dev/talend/common/tsbi/${tsbiImage}:${tsbiVersion}'
-            command: [cat]
-            tty: true
-            volumeMounts: [
-                {name: m2main, mountPath: /root/.m2/repository}, 
-                {name: dockercache, mountPath: /root/.dockercache}
-            ]
-            resources: {requests: {memory: 3G, cpu: '2.5'}, limits: {memory: 3G, cpu: '2.5'}}
-            env:
-                - name: DOCKER_HOST
-                  value: tcp://localhost:2375
-        - 
-            name: docker-daemon
-            image: artifactory.datapwn.com/docker-io-remote/docker:23.0.6-dind
-            env:
-                - name: DOCKER_TLS_CERTDIR
-                  value: ""
-            securityContext:
-                privileged: true   
-    volumes:
-        -
-            name: m2main
-            hostPath: {path: ${m2} }
-        -
-            name: dockercache
-            hostPath: {path: /tmp/jenkins/tdi/docker}
-    imagePullSecrets:
-        - name: talend-registry
-"""
+            yamlFile '.jenkins/jenkins_pod.yml'
+            defaultContainer 'main'
         }
     }
 
     environment {
-        MAVEN_OPTS = '-Dmaven.artifact.threads=128 -Dorg.slf4j.simpleLogger.showThreadName=true -Dorg.slf4j.simpleLogger.showDateTime=true -Dorg.slf4j.simpleLogger.dateTimeFormat=HH:mm:ss'
+        //MAVEN_OPTS = '-Dmaven.artifact.threads=128 -Dorg.slf4j.simpleLogger.showThreadName=true -Dorg.slf4j.simpleLogger.showDateTime=true -Dorg.slf4j.simpleLogger.dateTimeFormat=HH:mm:ss'
+        MAVEN_OPTS = ['-Dmaven.artifact.threads=128',
+                      '-Dorg.slf4j.simpleLogger.showThreadName=true',
+                      '-Dorg.slf4j.simpleLogger.showDateTime=true',
+                      '-Dorg.slf4j.simpleLogger.dateTimeFormat=HH:mm:ss'].join(' ')
         deploymentSuffix = ''
     }
 
@@ -91,6 +59,18 @@ spec:
     }
 
     stages {
+        stage('Preliminary steps') {
+            steps {
+                ///////////////////////////////////////////
+                // asdf install
+                ///////////////////////////////////////////
+                script {
+                    println "asdf install the content of repository .tool-versions"
+                    sh 'bash .jenkins/asdf_install.sh'
+                }
+            }
+        }
+
         stage('Build') {
             when {
                 expression {
@@ -146,12 +126,14 @@ spec:
         }
     }
 
+/*
     post {
         success {
-            slackSend(color: '#00FF00', message: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})", channel: "${slackChannel}")
+            slackSend(color: '#00FF00', message: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})", channel: "${env.SLACK_CI_CHANNEL}")
         }
         failure {
-            slackSend(color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})", channel: "${slackChannel}")
+            slackSend(color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})", channel: "${env.SLACK_CI_CHANNEL}")
         }
     }
+*/
 }
