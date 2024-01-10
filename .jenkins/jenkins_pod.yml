@@ -24,7 +24,7 @@ spec:
       command: [ cat ]
       tty: true
       volumeMounts: [
-        { name: efs-jenkins-tsap-rfc-server-m2-rootless, mountPath: /home/jenkins/.m2/repository },
+        { name: efs-jenkins-connectors-lib-se-m2-rootless, mountPath: /home/jenkins/.m2/repository },
         { name: efs-jenkins-connectors-asdf-rootless, mountPath: /home/jenkins/.asdf/installs },
       ]
       resources: { requests: { memory: 3G, cpu: '4' }, limits: { memory: 8G, cpu: '5' } }
