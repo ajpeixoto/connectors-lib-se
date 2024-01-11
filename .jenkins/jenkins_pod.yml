@@ -20,7 +20,7 @@ spec:
       # The last root version of custom-builder: https://github.com/Talend/tsbi-images/blob/main/CHANGELOG.md
       # If you use this pod you will be jenkins user
       # Read the doc: https://github.com/Talend/tsbi-images/blob/main/tsbi/custom-builder/README.md#migrate-from-any-builder-to-custom-builder-31
-      image: 'artifactory.datapwn.com/tlnd-docker-dev/talend/common/tsbi/custom-builder:4.0.10-20231222093400'
+      image: 'artifactory.datapwn.com/tlnd-docker-dev/talend/common/tsbi/custom-builder:3.1.18-20230804115923'
       command: [ cat ]
       tty: true
       volumeMounts: [
