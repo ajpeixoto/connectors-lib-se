@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.talend.components</groupId>
 	<artifactId>talend-mscrm</artifactId>
-	<version>3.17-20231214</version>
+	<version>3.18-20240103</version>
 	<packaging>jar</packaging>
 
 	<name>talend-mscrm</name>
@@ -35,7 +35,7 @@
 
 		<nimbus-jose-jwt.version>9.30.2</nimbus-jose-jwt.version>
 		<woodstox-core.version>6.5.0</woodstox-core.version>
-		<reactor-netty.version>1.0.25</reactor-netty.version>
+		<reactor-netty.version>1.0.40</reactor-netty.version>
 
 		<commons-fileupload.version>1.5</commons-fileupload.version>
 		<commons-io.version>2.8.0</commons-io.version>
