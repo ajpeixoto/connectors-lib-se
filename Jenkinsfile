@@ -17,10 +17,6 @@ final nexusCredentials = usernamePassword(
         credentialsId: 'nexus-artifact-zl-credentials',
         usernameVariable: 'NEXUS_USER',
         passwordVariable: 'NEXUS_PASSWORD')
-final String podLabel = "connectors-lib-se-${UUID.randomUUID().toString()}".take(53)
-final String tsbiImage = 'jdk11-svc-springboot-builder'
-final String tsbiVersion = '2.9.18-2.4-20220104141654'
-final String m2 = "/tmp/jenkins/tdi/m2/"
 String junits = ""
 
 pipeline {
@@ -44,7 +40,6 @@ pipeline {
     }
 
     environment {
-        //MAVEN_OPTS = '-Dmaven.artifact.threads=128 -Dorg.slf4j.simpleLogger.showThreadName=true -Dorg.slf4j.simpleLogger.showDateTime=true -Dorg.slf4j.simpleLogger.dateTimeFormat=HH:mm:ss'
         MAVEN_OPTS = ['-Dmaven.artifact.threads=128',
                       '-Dorg.slf4j.simpleLogger.showThreadName=true',
                       '-Dorg.slf4j.simpleLogger.showDateTime=true',
@@ -78,7 +73,7 @@ pipeline {
                 }
             }
             steps {
-                container(tsbiImage) {
+                container('main') {
                     withCredentials([nexusCredentials]) {
                         script {
                             if ("pom.xml" == params.pom_path) {
@@ -110,7 +105,7 @@ pipeline {
                 }
             }
             steps {
-                container(tsbiImage) {
+                container('main') {
                     withCredentials([nexusCredentials]) {
                         script {
                             if ("pom.xml" == params.pom_path) {
