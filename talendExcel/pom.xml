@@ -15,18 +15,28 @@
 	</licenses>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<talend.nexus.url>https://artifacts-oss.talend.com</talend.nexus.url>
 		<java.source.version>1.8</java.source.version>
 	</properties>
 	<repositories>
 		<repository>
-			<id>talend.oss.snapshots</id>
-			<name>snapshots</name>
-			<url>${talend.nexus.url}/nexus/content/repositories/TalendOpenSourceSnapshot/</url>
+			<id>talend.oss.releases</id>
+			<url>https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceRelease/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
 		</repository>
 		<repository>
-			<id>talend.oss.releases</id>
-			<url>${talend.nexus.url}/nexus/content/repositories/TalendOpenSourceRelease/</url>
+			<id>talend.oss.snapshots</id>
+			<url>https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceSnapshot/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
 		</repository>
 	</repositories>
 	<dependencyManagement>
@@ -39,19 +49,9 @@
 		</dependencies>
 	</dependencyManagement>
 	<distributionManagement>
-		<snapshotRepository>
-			<id>talend.oss.snapshots</id>
-			<url>${talend.nexus.url}/nexus/content/repositories/TalendOpenSourceSnapshot/</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-		</snapshotRepository>
 		<repository>
 			<id>talend.oss.releases</id>
-			<url>${talend.nexus.url}/nexus/content/repositories/TalendOpenSourceRelease/</url>
+			<url>https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceRelease/</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -59,6 +59,16 @@
 				<enabled>true</enabled>
 			</releases>
 		</repository>
+		<snapshotRepository>
+			<id>talend.oss.snapshots</id>
+			<url>https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceSnapshot/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+		</snapshotRepository>
 	</distributionManagement>
 	<dependencies>
 		<dependency>
