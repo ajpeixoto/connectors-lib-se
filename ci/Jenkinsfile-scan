@@ -84,7 +84,8 @@ spec:
         stage("SourceClear analysis") {
             steps {
                 container('main') {
-                    withCredentials([string(credentialsId: 'veracode-token', variable: 'SRCCLR_API_TOKEN')]) {
+                    withCredentials([string(credentialsId: 'veracode-token', variable: 'SRCCLR_API_TOKEN'),
+                                     nexusCredentials]) {
                         sh '''#!/bin/bash
                           curl -sSL https://download.sourceclear.com/ci.sh | SRCCLR_API_TOKEN=${SRCCLR_API_TOKEN} DEBUG=1 sh -s -- scan --allow-dirty --recursive --skip-collectors npm;
                         '''
