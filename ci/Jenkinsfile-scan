@@ -91,7 +91,7 @@ spec:
         stage('Vera code') {
             steps {
                 container('main') {
-                    sh "mvn -U -B clean package -Dmaven.test.skip=true"
+                    sh "mvn -U -B clean package -s .jenkins/settings.xml -Dmaven.test.skip=true"
                     withCredentials([veracodeCredentials]) {
                         veracode applicationName: "$VERACODE_SANDBOX",
                                 teams: "Components",
